@@ -153,7 +153,15 @@ namespace eutelescope {
 
 		private:
         /// prevent users from making (default) copies of processors
-		DISALLOW_COPY_AND_ASSIGN(EUTelProcessorPatRecTriplets)   
+		DISALLOW_COPY_AND_ASSIGN(EUTelProcessorPatRecTriplets) 
+		AIDA::IHistogram1D * _DoubletXseperationHistoRight;
+		AIDA::IHistogram1D * _DoubletYseperationHistoRight;
+		AIDA::IHistogram1D * _DoubletXseperationHistoLeft;
+		AIDA::IHistogram1D * _DoubletYseperationHistoLeft;
+		AIDA::IHistogram1D * _TripletXseperationHistoRight;
+		AIDA::IHistogram1D * _TripletYseperationHistoRight;
+		AIDA::IHistogram1D * _TripletXseperationHistoLeft;
+		AIDA::IHistogram1D * _TripletYseperationHistoLeft;  
      
 	};
 

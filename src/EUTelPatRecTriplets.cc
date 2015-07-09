@@ -3,7 +3,13 @@
 #include "EUTelGeometryTelescopeGeoDescription.h"
 namespace eutelescope {
 
-EUTelPatRecTriplets::EUTelPatRecTriplets():  
+EUTelPatRecTriplets::EUTelPatRecTriplets()  
+{}
+
+
+  EUTelPatRecTriplets::EUTelPatRecTriplets(AIDA::IHistogram1D * DoubletXseperationHistoRight, AIDA::IHistogram1D * DoubletYseperationHistoRight, AIDA::IHistogram1D * DoubletXseperationHistoLeft,
+					   AIDA::IHistogram1D * DoubletYseperationHistoLeft, AIDA::IHistogram1D * TripletXseperationHistoRight, AIDA::IHistogram1D * TripletYseperationHistoRight,
+					   AIDA::IHistogram1D * TripletXseperationHistoLeft, AIDA::IHistogram1D * TripletYseperationHistoLeft):  
 _totalNumberOfHits(0),
 _totalNumberOfSharedHits(0),
 _firstExecution(true),
@@ -15,7 +21,16 @@ _numberTripletsRight(0),
 _allowedMissingHits(0),
 _tripletSlopeCuts(0,0),
 _beamE(-1.),
-_beamQ(-1.)
+_beamQ(-1.),
+_DoubletXseperationHistoRight(DoubletXseperationHistoRight),
+_DoubletYseperationHistoRight(DoubletYseperationHistoRight),
+_DoubletXseperationHistoLeft(DoubletXseperationHistoLeft),
+_DoubletYseperationHistoLeft(DoubletYseperationHistoLeft),
+_TripletXseperationHistoRight(TripletXseperationHistoRight),
+_TripletYseperationHistoRight(TripletYseperationHistoRight),
+_TripletXseperationHistoLeft(TripletXseperationHistoLeft),
+_TripletYseperationHistoLeft(TripletYseperationHistoLeft)
+
 {}
 EUTelPatRecTriplets::~EUTelPatRecTriplets()  
 {}
@@ -109,6 +124,7 @@ std::vector<EUTelPatRecTriplets::triplets> EUTelPatRecTriplets::getTriplets()
     std::vector<unsigned int> cenID;
     cenID.push_back(1);
     cenID.push_back(4);
+
     for(size_t i=0 ; i< cenID.size(); i++){
         streamlog_out(DEBUG1) << "Centre sensor ID: " << cenID.at(i)  << std::endl;
         EVENT::TrackerHitVec& hitCentre = _mapHitsVecPerPlane[cenID.at(i)];
@@ -146,6 +162,17 @@ std::vector<EUTelPatRecTriplets::triplets> EUTelPatRecTriplets::getTriplets()
                 if(fabs(doublet.diff.at(0)) >  _doubletDistCut.at(0) or fabs(doublet.diff.at(1)) >  _doubletDistCut.at(1) ){
                     continue;
                 }
+
+		if(cenID.at(i) == 1){
+		  _DoubletXseperationHistoRight->fill(doublet.diff.at(0));
+		  _DoubletYseperationHistoRight->fill(doublet.diff.at(1));
+		}
+
+		else if(cenID.at(i) == 4){
+		  _DoubletXseperationHistoLeft->fill(doublet.diff.at(0));
+		  _DoubletYseperationHistoLeft->fill(doublet.diff.at(1));
+		}
+
                 streamlog_out(DEBUG1) << "PASS 1!! " << std::endl;
 
                 //Now loop through all hits on plane between two hits which create doublets. 
@@ -170,6 +197,16 @@ std::vector<EUTelPatRecTriplets::triplets> EUTelPatRecTriplets::getTriplets()
                     if(fabs(delX) >  _doubletCenDistCut.at(0) or fabs(delY) >  _doubletCenDistCut.at(1) ){
                         continue;
                     }
+	
+           	if(cenID.at(i) == 1){
+		  _TripletXseperationHistoRight->fill(delX);
+		  _TripletYseperationHistoRight->fill(delY);
+		}
+
+		else if(cenID.at(i) == 4){
+		  _TripletXseperationHistoLeft->fill(delX);
+		  _TripletYseperationHistoLeft->fill(delY);
+		}
                     streamlog_out(DEBUG1) << "PASS 2!! " << std::endl;
                     triplets triplet = getTriplet(stateLeft,state, stateRight,doublet);
                      if(triplet.cenPlane == 1){

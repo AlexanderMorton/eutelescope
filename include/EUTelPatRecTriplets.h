@@ -38,6 +38,19 @@
 #include "streamlog/streamlog.h"
 #include "gear/gearimpl/Vector3D.h"
 
+// MARLIN
+#include <marlin/AIDAProcessor.h>
+#include "marlin/Exceptions.h"
+#include "marlin/Global.h"
+#include "marlin/Processor.h"
+#include "marlin/VerbosityLevels.h"
+
+// AIDA
+#include <AIDA/IBaseHistogram.h>
+#include <AIDA/IHistogram1D.h>
+#include <AIDA/IHistogramFactory.h>
+
+
 namespace eutelescope {
 
 	class EUTelPatRecTriplets {
@@ -63,6 +76,9 @@ namespace eutelescope {
 	public:
 		EUTelPatRecTriplets();
 		~EUTelPatRecTriplets();
+		EUTelPatRecTriplets(AIDA::IHistogram1D * _DoubletXseperationHistoRight, AIDA::IHistogram1D * _DoubletYseperationHistoRight, AIDA::IHistogram1D * _DoubletXseperationHistoLeft,
+				    AIDA::IHistogram1D * _DoubletYseperationHistoLeft, AIDA::IHistogram1D * _TripletXseperationHistoRight, AIDA::IHistogram1D * _TripletYseperationHistoRight, 
+				    AIDA::IHistogram1D * _TripletXseperationHistoLeft, AIDA::IHistogram1D * _TripletYseperationHistoLeft);
 
         //doublet distance cut
         std::vector<float> _doubletDistCut;
@@ -280,7 +296,16 @@ TMatrixD _jacobianF;
 		
 		/** Kalman residual covariance matrix */
 		TMatrixD _residualCovR;
-		
+
+		AIDA::IHistogram1D * _DoubletXseperationHistoRight;
+		AIDA::IHistogram1D * _DoubletYseperationHistoRight;
+		AIDA::IHistogram1D * _DoubletXseperationHistoLeft;
+		AIDA::IHistogram1D * _DoubletYseperationHistoLeft;
+		AIDA::IHistogram1D * _TripletXseperationHistoRight;
+		AIDA::IHistogram1D * _TripletYseperationHistoRight;
+		AIDA::IHistogram1D * _TripletXseperationHistoLeft;
+		AIDA::IHistogram1D * _TripletYseperationHistoLeft;
+
 private:
 	};
 
