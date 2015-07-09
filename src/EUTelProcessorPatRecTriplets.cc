@@ -21,7 +21,16 @@ _nProcessedRuns(0),
 _nProcessedEvents(0),
 _eBeam(-1.),
 _qBeam(-1.),
-_dataMissNumber(0)  
+_dataMissNumber(0),
+_DoubletXseperationHistoRight(),
+_DoubletYseperationHistoRight(),
+_DoubletXseperationHistoLeft(),
+_DoubletYseperationHistoLeft(),
+_TripletXseperationHistoRight(),
+_TripletYseperationHistoRight(),
+_TripletXseperationHistoLeft(),
+_TripletYseperationHistoLeft()
+ 
 {
 	///The standard description that comes with every processor 
 	_description = "EUTelProcessorPatRecTriplets preforms track pattern recognition.";
@@ -64,6 +73,15 @@ _dataMissNumber(0)
 void EUTelProcessorPatRecTriplets::init(){
 
 	try{
+
+	  _DoubletXseperationHistoRight = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Doublet X Seperation, Right Arm", 400, -0.5, 0.5);
+	  _DoubletYseperationHistoRight =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Doublet Y Seperation, Right Arm", 400, -0.5, 0.5);
+	  _DoubletXseperationHistoLeft =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Doublet X Seperation, Left Arm", 400, -0.5, 0.5);
+	  _DoubletYseperationHistoLeft =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Doublet Y Seperation, Left Arm", 400, -0.5, 0.5);
+	  _TripletXseperationHistoRight =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet X Seperation, Right Arm", 400, -0.5, 0.5);
+	  _TripletYseperationHistoRight =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet Y Seperation, Right Arm", 400, -0.5, 0.5);
+	  _TripletXseperationHistoLeft =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet X Seperation, Left Arm", 400, -0.5, 0.5);
+	  _TripletYseperationHistoLeft =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet Y Seperation, Left Arm", 400, -0.5, 0.5);
 		_nProcessedRuns = 0;
 		_nProcessedEvents = 0;
 		std::string name = EUTELESCOPE::GEOFILENAME;
@@ -76,7 +94,8 @@ void EUTelProcessorPatRecTriplets::init(){
 			streamlog_out(MESSAGE5) << geo::gGeometry().sensorZOrderToIDWithoutExcludedPlanes().at(i) << "  ";
 		}
 		streamlog_out(MESSAGE5) << std::endl;
-		_trackFitter = new EUTelPatRecTriplets();
+		_trackFitter = new EUTelPatRecTriplets(_DoubletXseperationHistoRight,_DoubletYseperationHistoRight,_DoubletXseperationHistoLeft,_DoubletYseperationHistoLeft,
+						       _TripletXseperationHistoRight,_TripletYseperationHistoRight,_TripletXseperationHistoLeft,_TripletYseperationHistoLeft);
 		_trackFitter->setDoubletDistCut(_doubletDistCut);
 		_trackFitter->setTripletSlopeCuts(_tripletSlopeCuts);
 		_trackFitter->setDoubletCenDistCut(_doubletCenDistCut);
