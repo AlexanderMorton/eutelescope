@@ -218,7 +218,7 @@ namespace eutelescope {
 		}
 
 		for(size_t i=0; i < geo::gGeometry().sensorIDsVec().size(); ++i){
-			_parameterIdXResolutionVec[ geo::gGeometry().sensorZOrderToID(i)] = vector.at(i);
+			_parameterIdXResolutionVec[ geo::gGeometry().sensorIDsVec().at(i)] = vector.at(i);
 		}
 	}
 	//This sets the estimated resolution for each plane in the Y direction.
@@ -229,7 +229,7 @@ namespace eutelescope {
 			throw(lcio::Exception("The size of the resolution vector and the total number of planes is different for y axis."));
 		}
 		for(size_t i=0; i < geo::gGeometry().sensorIDsVec().size(); ++i){
-			_parameterIdYResolutionVec[ geo::gGeometry().sensorZOrderToID(i)] = vector.at(i);
+			_parameterIdYResolutionVec[ geo::gGeometry().sensorIDsVec().at(i)] = vector.at(i);
 		}
 	}
 

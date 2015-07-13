@@ -144,9 +144,6 @@ class EUTelGeometryTelescopeGeoDescription
 	/** Sensor ID map (inverse sensorIDVec) */
 	std::map< int, int > _sensorIDVecMap;
 
-	/** Map from number along the Z axis (beam axis) to sensor ID */
-	std::map<int, int> _sensorZOrderToIDMap;
-
 	/** Map from sensor ID to number along Z */
 	std::map<int, int> _sensorIDtoZOrderMap;
 
