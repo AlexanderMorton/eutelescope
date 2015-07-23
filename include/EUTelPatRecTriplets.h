@@ -194,19 +194,34 @@ namespace eutelescope {
 
     //Get functions.
 
-    //! Create vector of triplets from hits passed to fitter. 
+    //! Create map between fitID and triplets after finding the triplets.
     /*! Hits are linked by removing the difference in position relative to curvature for doublet and triplet creation.
      *  Cuts are performed on the distance between hits on planes. See GBL examples for more information. 
+     *  The fit ID is a unique number for each triplet. Two maps are created for the left and right arm
+     *
+     *  @param[out] mapTripLeft Map between fitID and up stream triplets.
+     *  @param[out] mapTriplRight Map between fitID and down stream triplets.
      */
+    void getTriplets(std::map<unsigned int, triplets >& mapTripLeft , std::map<unsigned int, triplets>& mapTripRight);
+    //! This function will find the matches between left and right triplets.
+    /*! Extraploate the triplets on the left and right hand side to a central point.
+     *  Then if the triplets have a similar slope and are at roughly the same location then match them.
+     *  The matching is done using the IDs of the triplets. So we have a map from each left hand triplet ID to a vector of all right hand triplets matched. 
+     *  @param[in] mapTripLeft Map between fitID and up stream triplets.
+     *  @param[in] mapTriplRight Map between fitID and down stream triplets.
+     *  @return mapLeftToRight This map which takes the left triplets IDs and returns a vector of right triplets IDs matched.
+     */  
 
-    std::vector<EUTelPatRecTriplets::triplets> getTriplets();
+     std::map<unsigned int, std::vector<unsigned int> > getMatchLeftToRight( std::map<unsigned int, triplets >&, std::map<unsigned int, triplets>&);
+
     //! The triplets on each plane are passed. 
     /*! If they pass a extraplolated postion/slope comparison then form a track. 
      *  If there is more than 1 match for a triplet remove triplet.  
-     *  @param[in] 
-     *  @return map Map of triplet fit ID and vector of hits.
+     *  @param[in] mapTripLeft map between triplet ID and triplets of arm up stream 
+     *  @param[in] mapTripRight map between triplet ID and triplet down stream
+     *  @return hitList Vector of vectors of hits for each track. 
      */
-    std::map<int,std::vector<EUTelHit> >  getTrackHitsFromTriplets(std::vector<EUTelPatRecTriplets::triplets>&);
+    std::vector<std::vector<EUTelHit> >  getTrackHitsFromTriplets( std::map<unsigned int, triplets >& mapTripLeft , std::map<unsigned int, triplets>& mapTripRight);
     /// Will return hits in the correct z order. 
     /**
      * \param[in] hits Not correct in Z

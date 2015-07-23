@@ -35,9 +35,7 @@ void EUTelPatRecTriplets::setPlaneDimensionsVec(EVENT::IntVec& planeDimensions){
 /*This is the function which should be used in processEvent
 */
 std::vector<EUTelTrack> EUTelPatRecTriplets::getTracks(){
-    EUTelNav::init();
-    EUTelNav::_intBeamE = getBeamMomentum();
-    EUTelNav::_senInc =  EUTelExcludedPlanes::_senInc; ///This is not needed by EUTelNav but EUTelTrackCreate. However we need EUTelNav for EUTelTrackCreate.
+    EUTelNav::init(getBeamMomentum());
     setHitsVecPerPlane();
     testHitsVecPerPlane();
     std::vector<EUTelTrack>  tracks;
@@ -108,15 +106,15 @@ bool EUTelPatRecTriplets::getTriplet(doublets& doublet, EUTelHit& hitCen,triplet
 
 }
 
-std::vector<EUTelPatRecTriplets::triplets> EUTelPatRecTriplets::getTriplets()
+void EUTelPatRecTriplets::getTriplets(std::map<unsigned int, triplets >& mapTripLeft , std::map<unsigned int, triplets>& mapTripRight)
 {
-	 streamlog_out(DEBUG1) << "Create triplets..." << std::endl;
-    std::vector<triplets> tripletsVec;
+	streamlog_out(DEBUG1) << "Create triplets..." << std::endl;
     const double curvX = EUTelNav::_curv.at(0); 
     const double curvY =  EUTelNav::_curv.at(1); 
     std::vector<unsigned int> cenID;
     cenID.push_back(1);
     cenID.push_back(4);
+    unsigned int tripID = 0;
     for(size_t i=0 ; i< cenID.size(); i++){
         streamlog_out(DEBUG1) << "Centre sensor ID: " << cenID.at(i)  << std::endl;
         std::vector<EUTelHit>& hitCentre = _mapHitsVecPerPlane[cenID.at(i)];
@@ -141,85 +139,73 @@ std::vector<EUTelPatRecTriplets::triplets> EUTelPatRecTriplets::getTriplets()
                     streamlog_out(DEBUG1) << "PASS 2!! " << std::endl;
                      if(triplet.cenPlane == 1){
                         _numberTripletsLeft++;
+                        mapTripLeft[tripID] = triplet;
+                        tripID++;
                     }else if(triplet.cenPlane == 4){
+                        mapTripRight[tripID] = triplet;
                         _numberTripletsRight++;
+                        tripID++;
                     }
-                    tripletsVec.push_back(triplet); 
                 }
             }
         }
-        if(cenID.size()-1 == i and tripletsVec.size() == 0){//If not triplets found on first plane end search.
+        if(mapTripLeft.size() == 0){//If no triplets found on first arm end search.
             streamlog_out(DEBUG1) << "FOUND NO TRIPLETS FOR EVENT: " << getEventNumber()  << std::endl;
             break;
         }
     }
-    return tripletsVec;
-
 }
-std::map<int,std::vector<EUTelHit> > EUTelPatRecTriplets::getTrackHitsFromTriplets(std::vector<EUTelPatRecTriplets::triplets>& tripletsVec){
-    streamlog_out(DEBUG1) << "Set track states and hits... " << std::endl;
-    std::map<int,std::vector<EUTelHit> > fitID_Hits;
-    std::vector<triplets>::iterator itTriplet;
-    std::vector<triplets> leftTriplets;
-    std::vector<triplets> rightTriplets;
-    unsigned int fitID = 0;
-    for(itTriplet = tripletsVec.begin();itTriplet != tripletsVec.end();  itTriplet++){
-      streamlog_out(DEBUG0) << "itTriplet->matches = " <<itTriplet->matches<< std::endl;
-        if(itTriplet->cenPlane == 1 ){
-            leftTriplets.push_back(*itTriplet);
-        }else if(itTriplet->cenPlane == 4){
-            rightTriplets.push_back(*itTriplet);
-        }else{
-            throw(lcio::Exception( "Triplet are not from the left and right arms!"  ));
-        }
-    }
-    std::vector<triplets>::iterator itLeftTriplet;
-    std::vector<triplets>::iterator itRightTriplet;
+ std::map<unsigned int, std::vector<unsigned int> >EUTelPatRecTriplets::getMatchLeftToRight( std::map<unsigned int, triplets >& mapTripLeft , std::map<unsigned int, triplets>& mapTripRight){
+    std::map<unsigned int, std::vector<unsigned int> > mapLeftMatchRight;
     streamlog_out(DEBUG1) << "Use triplets... " << std::endl;
-    for(itLeftTriplet = leftTriplets.begin();itLeftTriplet != leftTriplets.end();  itLeftTriplet++){
-        for(itRightTriplet = rightTriplets.begin();itRightTriplet != rightTriplets.end();  itRightTriplet++){
-	  streamlog_out(DEBUG0) << "itLeftTriplet->matches = " <<itLeftTriplet->matches<< "  itRightTriplet->matches = " <<itRightTriplet->matches<< std::endl;
+    for( std::map<unsigned int, triplets>::iterator itL = mapTripLeft.begin();itL != mapTripLeft.end();  itL++){
+        std::vector<unsigned int> idsRight;
+        for( std::map<unsigned int, triplets>::iterator itR = mapTripRight.begin();itR != mapTripRight.end();  itR++){
+            triplets& tripLeft = itL->second;
+            triplets& tripRight = itR->second;
 
-                    streamlog_out(DEBUG1) << "Triplet slope delta match Cut: " <<"X delta: " << fabs(itRightTriplet->slope.at(0) - itLeftTriplet->slope.at(0)) <<" Cut: " << _tripletSlopeCuts.at(0) << " Y delta: " <<  fabs(itRightTriplet->slope.at(1) - itLeftTriplet->slope.at(1))<<" Cut: " <<  _tripletSlopeCuts.at(1)  << std::endl;
+            streamlog_out(DEBUG1) << "Triplet slope delta match Cut: " <<"X delta: " << fabs(tripLeft.slope.at(0) - tripRight.slope.at(0)) <<" Cut: " << _tripletSlopeCuts.at(0) << " Y delta: " <<  fabs(tripLeft.slope.at(1) - tripRight.slope.at(1))<<" Cut: " <<  _tripletSlopeCuts.at(1)  << std::endl;
 
-            if(fabs(itRightTriplet->slope.at(0) - itLeftTriplet->slope.at(0)) > _tripletSlopeCuts.at(0)  or fabs(itRightTriplet->slope.at(1) - itLeftTriplet->slope.at(1)) >_tripletSlopeCuts.at(1)  ){
+            if(fabs(tripRight.slope.at(0) - tripLeft.slope.at(0)) > _tripletSlopeCuts.at(0)  or fabs(tripRight.slope.at(1) - tripLeft.slope.at(1)) >_tripletSlopeCuts.at(1)  ){
                 continue;
             }
             streamlog_out(DEBUG1) << "PASS 3!! " << std::endl;
-            const float aveZPosTrip = (itLeftTriplet->pos.at(2)+ itRightTriplet->pos.at(2))/2.0;
+            const float aveZPosTrip = (tripLeft.pos.at(2) + tripRight.pos.at(2))/2.0;
             streamlog_out(DEBUG1) << "Triplet Propagation..." <<std::endl;   
             streamlog_out(DEBUG1) << "LEFT" <<std::endl;   
-            std::vector<float> posLeftAtZ = getTripPosAtZ(*itLeftTriplet,aveZPosTrip); 
+            std::vector<float> posLeftAtZ = getTripPosAtZ(tripLeft,aveZPosTrip); 
             streamlog_out(DEBUG1) << "RIGHT" <<std::endl;   
-            std::vector<float> posRightAtZ = getTripPosAtZ(*itRightTriplet,aveZPosTrip); 
+            std::vector<float> posRightAtZ = getTripPosAtZ(tripRight,aveZPosTrip); 
             streamlog_out(DEBUG1) << "Predicted position of triplet1/triplet2 " << posLeftAtZ.at(0) <<"/"<<posRightAtZ.at(0) << "  " << posLeftAtZ.at(1) <<"/"<<posRightAtZ.at(1)<< "  " << posLeftAtZ.at(2) <<"/"<<posRightAtZ.at(2) <<std::endl;
             streamlog_out(DEBUG1) << "Delta between Triplets X: "<< fabs(posLeftAtZ.at(0)- posRightAtZ.at(0)) <<" Cut X: " << _tripletConnectDistCut.at(0) << " Delta Y: " << fabs(posLeftAtZ.at(1)- posRightAtZ.at(1)) << " Cut Y: " << _tripletConnectDistCut.at(1) << std::endl;
             if(fabs(posLeftAtZ.at(0)- posRightAtZ.at(0)) > _tripletConnectDistCut.at(0) or fabs(posLeftAtZ.at(1)- posRightAtZ.at(1)) > _tripletConnectDistCut.at(1)){
                 continue;
             }
-            //Pass without DUT
-            streamlog_out(DEBUG1) << "PASS 4!! " << std::endl;
-            itLeftTriplet->matches = itLeftTriplet->matches + 1;
-            itRightTriplet->matches = itRightTriplet->matches + 1;
-            itLeftTriplet->fitID = fitID;
-            itRightTriplet->fitID = fitID;
-            fitID++;
+            idsRight.push_back(itR->first);
+        }
+        ///We have all the IDs for the right set of triplets which matches with this single left triplet.
+        mapLeftMatchRight[itL->first] = idsRight; 
+
+    }
+    return mapLeftMatchRight;
+}
+std::vector<std::vector<EUTelHit> > EUTelPatRecTriplets::getTrackHitsFromTriplets( std::map<unsigned int, triplets >& mapTripLeft , std::map<unsigned int, triplets>& mapTripRight){
+    std::vector<std::vector<EUTelHit> > hitsList;
+     std::map<unsigned int, std::vector<unsigned int> > mapleftToRightMatch = getMatchLeftToRight(mapTripLeft,mapTripRight);
+    for(std::map<unsigned int, std::vector<unsigned int> >::iterator itM = mapleftToRightMatch.begin(); itM != mapleftToRightMatch.end();++itM){
+        for(size_t i=0 ; i < itM->second.size();++i){
+            std::cout<< itM->first << " "  << itM->second.at(i) <<std::endl;
+        }
+        std::cout<<std::endl;
+        if(itM->second.size() == 1){
+            std::cout << "FOUND TRACK FROM TRIPLETS!" << std::endl;
+            std::vector<EUTelHit> hits;
+            hits.insert( hits.end(), mapTripLeft.at(itM->first).hits.begin(), mapTripLeft.at(itM->first).hits.end() );
+            hits.insert( hits.end(), mapTripRight.at(itM->second.at(0)).hits.begin(), mapTripRight.at(itM->second.at(0)).hits.end() );
+            hitsList.push_back(hits);
         }
     }
-    for(itLeftTriplet = leftTriplets.begin();itLeftTriplet != leftTriplets.end();  itLeftTriplet++){streamlog_out(DEBUG1) << "1fitID = " <<fitID<< std::endl;
-        for(itRightTriplet = rightTriplets.begin();itRightTriplet != rightTriplets.end();  itRightTriplet++){streamlog_out(DEBUG1) << "itLeftTriplet->fitID = " <<itLeftTriplet->fitID<< "   itRightTriplet->fitID = " <<itRightTriplet->fitID<< std::endl;
-            if(itLeftTriplet->fitID == itRightTriplet->fitID){streamlog_out(DEBUG1) << "itLeftTriplet->matches = " <<itLeftTriplet->matches<< "  itRightTriplet->matches = " <<itRightTriplet->matches<< std::endl;
-                if(itLeftTriplet->matches == 1 and itRightTriplet->matches == 1 ){
-                    streamlog_out(DEBUG1) << "FOUND TRACK FROM TRIPLETS!" << std::endl;
-                    std::vector<EUTelHit> hits;
-                    hits.insert( hits.end(), itLeftTriplet->hits.begin(), itLeftTriplet->hits.end() );
-                    hits.insert( hits.end(), itRightTriplet->hits.begin(), itRightTriplet->hits.end() );
-                    fitID_Hits[itLeftTriplet->fitID] = hits;
-                }
-            }
-        }
-    }
-    return fitID_Hits;
+    return hitsList;
 }
 std::vector<EUTelHit> EUTelPatRecTriplets::getCorrHitOrder(std::vector<EUTelHit> hits ){
     std::vector<EUTelHit> finalHits;
@@ -340,15 +326,16 @@ float EUTelPatRecTriplets::getDistLocal(std::vector<EUTelHit>::iterator itHit, s
 
 std::vector<EUTelTrack> EUTelPatRecTriplets::getMinFakeTracks(){
     std::vector<EUTelTrack> tracks;
-    std::vector<EUTelPatRecTriplets::triplets> tripletVec = getTriplets();
-    streamlog_out(DEBUG1) << "Total number of triplets found:  " << tripletVec.size()  << std::endl;
-    std::map<int,std::vector<EUTelHit> > id_Hits  = getTrackHitsFromTriplets(tripletVec);
+    std::map<unsigned int, triplets > mapTripLeft; std::map<unsigned int, triplets> mapTripRight;
+    getTriplets(mapTripLeft,mapTripRight);
+    std::vector<std::vector<EUTelHit> > hitsList  = getTrackHitsFromTriplets(mapTripLeft,mapTripRight);
     ///Loop over all hits which make up a track. 
-    for(std::map<int, std::vector<EUTelHit> >::iterator itID_Hit = id_Hits.begin(); itID_Hit != id_Hits.end();++itID_Hit){
+    for(std::vector< std::vector<EUTelHit> >::iterator itHits = hitsList.begin(); itHits != hitsList.end();++itHits){
+        std::vector<EUTelHit> hits = *(itHits);
         doublets doub;
         ///We know this forms a track so increase cuts to infinity.
         std::vector<float> cuts; cuts.push_back(1000000); cuts.push_back(100000);
-        bool pass = getDoublet(*(itID_Hit->second.begin()),*(itID_Hit->second.rbegin()), cuts ,doub);
+        bool pass = getDoublet(*(hits.begin()),*(hits.rbegin()), cuts ,doub);
         std::vector<EUTelHit> newHits;
         std::vector< unsigned int> dut;
         if(EUTelExcludedPlanes::_senInc.size() > 6 ){
@@ -365,8 +352,8 @@ std::vector<EUTelTrack> EUTelPatRecTriplets::getMinFakeTracks(){
             continue;
         }
         std::vector<EUTelHit> combineHits;
-        combineHits.reserve( newHits.size() + itID_Hit->second.size() ); // preallocate memory
-        combineHits.insert( combineHits.end(), itID_Hit->second.begin(), itID_Hit->second.end() );
+        combineHits.reserve( newHits.size() + hits.size() ); // preallocate memory
+        combineHits.insert( combineHits.end(), hits.begin(), hits.end() );
         combineHits.insert( combineHits.end(), newHits.begin(), newHits.end() );
         streamlog_out(DEBUG1) <<" Combined! "  << std::endl;
 
