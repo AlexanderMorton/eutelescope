@@ -78,7 +78,8 @@ namespace eutelescope {
 		~EUTelPatRecTriplets();
 		EUTelPatRecTriplets(AIDA::IHistogram1D * _DoubletXseperationHistoRight, AIDA::IHistogram1D * _DoubletYseperationHistoRight, AIDA::IHistogram1D * _DoubletXseperationHistoLeft,
 				    AIDA::IHistogram1D * _DoubletYseperationHistoLeft, AIDA::IHistogram1D * _TripletXseperationHistoRight, AIDA::IHistogram1D * _TripletYseperationHistoRight, 
-				    AIDA::IHistogram1D * _TripletXseperationHistoLeft, AIDA::IHistogram1D * _TripletYseperationHistoLeft);
+				    AIDA::IHistogram1D * _TripletXseperationHistoLeft, AIDA::IHistogram1D * _TripletYseperationHistoLeft, AIDA::IHistogram1D * _TripletDistCutXHisto,
+				    AIDA::IHistogram1D *_TripletDistCutYHisto);
 
         //doublet distance cut
         std::vector<float> _doubletDistCut;
@@ -305,6 +306,8 @@ TMatrixD _jacobianF;
 		AIDA::IHistogram1D * _TripletYseperationHistoRight;
 		AIDA::IHistogram1D * _TripletXseperationHistoLeft;
 		AIDA::IHistogram1D * _TripletYseperationHistoLeft;
+		AIDA::IHistogram1D * _TripletDistCutXHisto;
+		AIDA::IHistogram1D * _TripletDistCutYHisto;
 
 private:
 	};
