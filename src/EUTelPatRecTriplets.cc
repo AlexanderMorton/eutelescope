@@ -9,7 +9,8 @@ EUTelPatRecTriplets::EUTelPatRecTriplets()
 
   EUTelPatRecTriplets::EUTelPatRecTriplets(AIDA::IHistogram1D * DoubletXseperationHistoRight, AIDA::IHistogram1D * DoubletYseperationHistoRight, AIDA::IHistogram1D * DoubletXseperationHistoLeft,
 					   AIDA::IHistogram1D * DoubletYseperationHistoLeft, AIDA::IHistogram1D * TripletXseperationHistoRight, AIDA::IHistogram1D * TripletYseperationHistoRight,
-					   AIDA::IHistogram1D * TripletXseperationHistoLeft, AIDA::IHistogram1D * TripletYseperationHistoLeft):  
+					   AIDA::IHistogram1D * TripletXseperationHistoLeft, AIDA::IHistogram1D * TripletYseperationHistoLeft, AIDA::IHistogram1D * TripletDistCutXHisto,
+					   AIDA::IHistogram1D * TripletDistCutYHisto):  
 _totalNumberOfHits(0),
 _totalNumberOfSharedHits(0),
 _firstExecution(true),
@@ -29,7 +30,10 @@ _DoubletYseperationHistoLeft(DoubletYseperationHistoLeft),
 _TripletXseperationHistoRight(TripletXseperationHistoRight),
 _TripletYseperationHistoRight(TripletYseperationHistoRight),
 _TripletXseperationHistoLeft(TripletXseperationHistoLeft),
-_TripletYseperationHistoLeft(TripletYseperationHistoLeft)
+_TripletYseperationHistoLeft(TripletYseperationHistoLeft),
+_TripletDistCutXHisto(TripletDistCutXHisto),
+_TripletDistCutYHisto(TripletDistCutYHisto)
+
 
 {}
 EUTelPatRecTriplets::~EUTelPatRecTriplets()  
@@ -400,9 +404,14 @@ std::vector<EUTelTrack> EUTelPatRecTriplets::findTrackFromTriplets(std::vector<E
             std::vector<float> posRightAtZ = getTripPosAtZ(*itRightTriplet,aveZPosTrip); 
             streamlog_out(DEBUG1) << "Predicted position of triplet1/triplet2 " << posLeftAtZ.at(0) <<"/"<<posRightAtZ.at(0) << "  " << posLeftAtZ.at(1) <<"/"<<posRightAtZ.at(1)<< "  " << posLeftAtZ.at(2) <<"/"<<posRightAtZ.at(2) <<std::endl;
             streamlog_out(DEBUG1) << "Delta between Triplets X: "<< fabs(posLeftAtZ.at(0)- posRightAtZ.at(0)) <<" Cut X: " << _tripletConnectDistCut.at(0) << " Delta Y: " << fabs(posLeftAtZ.at(1)- posRightAtZ.at(1)) << " Cut Y: " << _tripletConnectDistCut.at(1) << std::endl;
+
             if(fabs(posLeftAtZ.at(0)- posRightAtZ.at(0)) > _tripletConnectDistCut.at(0) or fabs(posLeftAtZ.at(1)- posRightAtZ.at(1)) > _tripletConnectDistCut.at(1)){
                 continue;
             }
+
+	    _TripletDistCutXHisto->fill(posLeftAtZ.at(0)- posRightAtZ.at(0));
+	    _TripletDistCutYHisto->fill(posLeftAtZ.at(1)- posRightAtZ.at(1));
+
             //Pass without DUT
             streamlog_out(DEBUG1) << "PASS 4!! " << std::endl;
             const float dist = (itRightTriplet->states.at(0).getPositionGlobal() - itLeftTriplet->states.at(2).getPositionGlobal()).Mag();

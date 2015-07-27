@@ -29,7 +29,9 @@ _DoubletYseperationHistoLeft(),
 _TripletXseperationHistoRight(),
 _TripletYseperationHistoRight(),
 _TripletXseperationHistoLeft(),
-_TripletYseperationHistoLeft()
+_TripletYseperationHistoLeft(),
+_TripletDistCutXHisto(),
+_TripletDistCutYHisto()
  
 {
 	///The standard description that comes with every processor 
@@ -82,6 +84,11 @@ void EUTelProcessorPatRecTriplets::init(){
 	  _TripletYseperationHistoRight =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet Y Seperation, Right Arm", 400, -0.5, 0.5);
 	  _TripletXseperationHistoLeft =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet X Seperation, Left Arm", 400, -0.5, 0.5);
 	  _TripletYseperationHistoLeft =marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet Y Seperation, Left Arm", 400, -0.5, 0.5);
+	  _TripletDistCutXHisto = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet Dist Cut X", 400, -1,1);
+	  _TripletDistCutYHisto = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D("Triplet Dist Cut Y", 400, -1,1);
+
+
+
 		_nProcessedRuns = 0;
 		_nProcessedEvents = 0;
 		std::string name = EUTELESCOPE::GEOFILENAME;
@@ -95,7 +102,7 @@ void EUTelProcessorPatRecTriplets::init(){
 		}
 		streamlog_out(MESSAGE5) << std::endl;
 		_trackFitter = new EUTelPatRecTriplets(_DoubletXseperationHistoRight,_DoubletYseperationHistoRight,_DoubletXseperationHistoLeft,_DoubletYseperationHistoLeft,
-						       _TripletXseperationHistoRight,_TripletYseperationHistoRight,_TripletXseperationHistoLeft,_TripletYseperationHistoLeft);
+						       _TripletXseperationHistoRight,_TripletYseperationHistoRight,_TripletXseperationHistoLeft,_TripletYseperationHistoLeft,_TripletDistCutXHisto,_TripletDistCutYHisto);
 		_trackFitter->setDoubletDistCut(_doubletDistCut);
 		_trackFitter->setTripletSlopeCuts(_tripletSlopeCuts);
 		_trackFitter->setDoubletCenDistCut(_doubletCenDistCut);

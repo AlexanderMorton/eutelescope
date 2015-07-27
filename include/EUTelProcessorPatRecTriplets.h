@@ -161,7 +161,9 @@ namespace eutelescope {
 		AIDA::IHistogram1D * _TripletXseperationHistoRight;
 		AIDA::IHistogram1D * _TripletYseperationHistoRight;
 		AIDA::IHistogram1D * _TripletXseperationHistoLeft;
-		AIDA::IHistogram1D * _TripletYseperationHistoLeft;  
+		AIDA::IHistogram1D * _TripletYseperationHistoLeft; 
+		AIDA::IHistogram1D * _TripletDistCutXHisto;
+		AIDA::IHistogram1D * _TripletDistCutYHisto;
      
 	};
 

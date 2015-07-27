@@ -727,9 +727,9 @@ void EUTelProcessorSparseClustering::bookHistos() {
 		hitMapHisto->setTitle("Pixel Index Hit Map;X Index [#];Y Index [#];Count [#]");
 
 		tempHistoName = _eventMultiplicityHistoName + "_d" + to_string( sensorID );
-		int     eventMultiNBin  = 15;
+		int     eventMultiNBin  = 41;
 		double  eventMultiMin   =  -0.5;
-		double  eventMultiMax   = 14.5;
+		double  eventMultiMax   = 40.5;
 		std::string  eventMultiTitle = "Event multiplicity";
 		if ( isHistoManagerAvailable ) {
 		  histoInfo = histoMgr->getHistogramInfo(  _eventMultiplicityHistoName );

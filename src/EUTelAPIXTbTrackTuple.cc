@@ -190,7 +190,7 @@ bool EUTelAPIXTbTrackTuple::readHits( std::string hitColName, LCEvent* event )
   	
 	int nHit = hitCollection->getNumberOfElements();
 	_nHits = nHit;
- 
+	std::cout << nHit << " nHits number" << std::endl;
   	for(int ihit=0; ihit< nHit ; ihit++)
        	{
     		TrackerHitImpl* meshit = dynamic_cast<TrackerHitImpl*>( hitCollection->getElementAt(ihit) ) ;
