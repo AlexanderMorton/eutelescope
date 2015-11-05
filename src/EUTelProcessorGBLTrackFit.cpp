@@ -22,6 +22,8 @@ std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameX4 = "Resi
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameX5 = "Residual5X";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut1 = "ResidualDut1X";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut2 = "ResidualDut2X";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut3 = "ResidualDut3X";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut4 = "ResidualDut4X";
 
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY0 = "Residual0Y";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY1 = "Residual1Y";
@@ -31,6 +33,8 @@ std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY4 = "Resi
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY5 = "Residual5Y";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut1 = "ResidualDut1Y";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut2 = "ResidualDut2Y";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut3 = "ResidualDut3Y";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut4 = "ResidualDut4Y";
 
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameX0p = "Residual0Xpull";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameX1p = "Residual1Xpull";
@@ -40,6 +44,8 @@ std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameX4p = "Res
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameX5p = "Residual5Xpull";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut1p = "ResidualDut1Xpull";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut2p = "ResidualDut2Xpull";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut3p = "ResidualDut3Xpull";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameXDut4p = "ResidualDut4Xpull";
 
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY0p = "Residual0Ypull";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY1p = "Residual1Ypull";
@@ -49,7 +55,8 @@ std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY4p = "Res
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameY5p = "Residual5Ypull";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut1p = "ResidualDut1Ypull";
 std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut2p = "ResidualDut2Ypull";
-
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut3p = "ResidualDut3Ypull";
+std::string EUTelProcessorGBLTrackFit::_histName::_residGblFitHistNameYDut4p = "ResidualDut4Ypull";
 
 EUTelProcessorGBLTrackFit::EUTelProcessorGBLTrackFit() :
 Processor("EUTelProcessorGBLTrackFit"),
@@ -79,6 +86,7 @@ _mEstimatorType() //This is used by the GBL software for outliers down weighting
   registerOptionalParameter("Mode", "Will this processor do the track parameterisation for you. 1 => yes 0 => no ", _mode ,int(1));
   registerOptionalParameter("IncMed", "Do you want to include the medium as addtional scattering", _incMed ,int(0));
   registerOptionalParameter("chi2Cut", "Cut for output track.", _chi2Cut ,double(1000.0));
+  registerOptionalParameter("dutNum", "number of DUTs", _dutNum ,int(2));
 
 
   registerOptionalParameter("HistogramInfoFilename", "Name of histogram info xml file", _histoInfoFileName, std::string("histoinfo.xml"));
@@ -244,8 +252,11 @@ void EUTelProcessorGBLTrackFit::plotResidual(std::map< int, std::map<float, floa
             duts.push_back(*itPla);
         }
 	}
-    int dut1 = -999; int dut2 =-999;
+	int dut1 = -999, dut2 =-999, dut3 = -999, dut4 =-999;
+	streamlog_out(MESSAGE9)<<"DUTs recognised: " <<duts.size() <<std::endl;
+	
 	for ( std::vector<int>::iterator itPla = duts.begin(); itPla != duts.end(); ++itPla) {
+	streamlog_out(MESSAGE9)<<"DUTs found : " << *itPla <<std::endl;
 
         if( itPla == duts.begin()){
             dut1 = *itPla;
@@ -254,6 +265,9 @@ void EUTelProcessorGBLTrackFit::plotResidual(std::map< int, std::map<float, floa
             dut2 = *itPla;
         }
     }
+	streamlog_out(MESSAGE9)<<"DUT1 and 2 values: " <<dut1 <<" " <<dut2 << std::endl;
+	if(_dutNum>2){ dut3=20; }
+	if(_dutNum>3){ dut4=21; }
 
 
 	/* Fill histograms */
@@ -270,8 +284,14 @@ void EUTelProcessorGBLTrackFit::plotResidual(std::map< int, std::map<float, floa
 	    if( sensor_residual_it->first == 5 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameX5 ] ) -> fill(res);}
 	    if( sensor_residual_it->first == dut1 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut1 ] ) -> fill(res);}
 	    if( sensor_residual_it->first == dut2 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut2 ] ) -> fill(res);}
+	    if(_dutNum>2){
+	      if( sensor_residual_it->first == dut3 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut3 ] ) -> fill(res);}
+	    }
+	    if(_dutNum>3){
+	      if( sensor_residual_it->first == dut4 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut4 ] ) -> fill(res);}
+	    }
 	    
-		}else{
+	  }else{
 			streamlog_out(DEBUG5) << "The map is NULL" <<std::endl;
 		}
 			float res2 = map.begin()->second;
@@ -283,6 +303,13 @@ void EUTelProcessorGBLTrackFit::plotResidual(std::map< int, std::map<float, floa
 			if( sensor_residual_it->first == 5){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameY5 ] ) -> fill(res2);}
 			if( sensor_residual_it->first == dut1){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameYDut1 ] ) -> fill(res2);}
 			if( sensor_residual_it->first == dut2){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameYDut2 ] ) -> fill(res2);}
+	    if(_dutNum>2){
+	      if( sensor_residual_it->first == dut3 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameYDut3 ] ) -> fill(res2);}
+	    }
+	    if(_dutNum>3){
+	      if( sensor_residual_it->first == dut4 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameYDut4 ] ) -> fill(res2);}
+	    }
+	    
 
 				
 	}
@@ -304,6 +331,12 @@ void EUTelProcessorGBLTrackFit::plotResidual(std::map< int, std::map<float, floa
 	    if( sensor_residualerror_it->first == 5){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameX5p ] ) -> fill(res/reserror);}
 	    if( sensor_residualerror_it->first == dut1){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut1p ] ) -> fill(res/reserror);}
 	    if( sensor_residualerror_it->first == dut2){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut2p ] ) -> fill(res/reserror);}
+	    if(_dutNum>2){
+	      if( sensor_residualerror_it->first == dut3 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut3p ] ) -> fill(res/reserror);}
+	    }
+	    if(_dutNum>3){
+	      if( sensor_residualerror_it->first == dut4 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut4p ] ) -> fill(res/reserror);}
+	    }
 	  }else{
 	    streamlog_out(DEBUG5) << "The map is NULL" <<std::endl;
 	  }
@@ -317,6 +350,12 @@ void EUTelProcessorGBLTrackFit::plotResidual(std::map< int, std::map<float, floa
 	  if( sensor_residualerror_it->first == 5){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameY5p ] ) -> fill(res2/res2error);}
 	  if( sensor_residualerror_it->first == dut1){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameYDut1p ] ) -> fill(res2/res2error);}
 	  if( sensor_residualerror_it->first == dut2){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameYDut2p ] ) -> fill(res2/res2error);}
+	    if(_dutNum>2){
+	      if( sensor_residualerror_it->first == dut3 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut3p ] ) -> fill(res2/res2error);}
+	    }
+	    if(_dutNum>3){
+	      if( sensor_residualerror_it->first == dut4 ){static_cast < AIDA::IHistogram1D* > ( _aidaHistoMap1D[ _histName::_residGblFitHistNameXDut4p ] ) -> fill(res2/res2error);}
+	    }
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,6 +426,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
         AIDA::IHistogram1D * residGblFit5X = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameX5, NBinX, MinX, MaxX); 
 	AIDA::IHistogram1D * residGblFitDut1X = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut1, NBinX, -0.4, 0.4);
 	AIDA::IHistogram1D * residGblFitDut2X = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut2, NBinX, -0.4, 0.4);
+	AIDA::IHistogram1D * residGblFitDut3X = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut3, NBinX, -0.4, 0.4);
+	AIDA::IHistogram1D * residGblFitDut4X = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut4, NBinX, -0.4, 0.4);
         
 
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameX0, residGblFit0X));
@@ -397,6 +438,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameX5, residGblFit5X));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut1, residGblFitDut1X));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut2, residGblFitDut2X));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut3, residGblFitDut3X));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut4, residGblFitDut4X));
 
 											
         AIDA::IHistogram1D * residGblFit0Y = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameY0, NBinX, MinX, MaxX); 
@@ -407,6 +450,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
         AIDA::IHistogram1D * residGblFit5Y = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameY5, NBinX, MinX, MaxX); 
 	AIDA::IHistogram1D * residGblFitDut1Y = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut1, NBinX, -0.4, 0.4); 
 	AIDA::IHistogram1D * residGblFitDut2Y = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut2, NBinX, -0.4, 0.4); 
+	AIDA::IHistogram1D * residGblFitDut3Y = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut3, NBinX, -0.4, 0.4); 
+	AIDA::IHistogram1D * residGblFitDut4Y = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut4, NBinX, -0.4, 0.4); 
 
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameY0, residGblFit0Y));
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameY1, residGblFit1Y));
@@ -416,6 +461,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameY5, residGblFit5Y));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut1, residGblFitDut1Y));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut2, residGblFitDut2Y));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut3, residGblFitDut3Y));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut4, residGblFitDut4Y));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Pull plots											
         int NBinp=120;
@@ -431,6 +478,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
         AIDA::IHistogram1D * residGblFit5Xp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameX5p, NBinp, MinXp, MaxXp);
 	AIDA::IHistogram1D * residGblFitDut1Xp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut1p, NBinp, MinXp, MaxXp);
 	AIDA::IHistogram1D * residGblFitDut2Xp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut2p, NBinp, MinXp, MaxXp);
+	AIDA::IHistogram1D * residGblFitDut3Xp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut3p, NBinp, MinXp, MaxXp);
+	AIDA::IHistogram1D * residGblFitDut4Xp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameXDut4p, NBinp, MinXp, MaxXp);
 
 
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameX0p, residGblFit0Xp));
@@ -441,6 +490,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameX5p, residGblFit5Xp));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut1p, residGblFitDut1Xp));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut2p, residGblFitDut2Xp));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut3p, residGblFitDut3Xp));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameXDut4p, residGblFitDut4Xp));
 								      
         AIDA::IHistogram1D * residGblFit0Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameY0p, NBinp, MinXp, MaxXp); 
         AIDA::IHistogram1D * residGblFit1Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameY1p, NBinp, MinXp, MaxXp); 
@@ -450,6 +501,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
         AIDA::IHistogram1D * residGblFit5Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameY5p, NBinp, MinXp, MaxXp); 
 	AIDA::IHistogram1D * residGblFitDut1Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut1p, NBinp, MinXp, MaxXp);
 	AIDA::IHistogram1D * residGblFitDut2Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut2p, NBinp, MinXp, MaxXp);
+	AIDA::IHistogram1D * residGblFitDut3Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut3p, NBinp, MinXp, MaxXp);
+	AIDA::IHistogram1D * residGblFitDut4Yp = marlin::AIDAProcessor::histogramFactory(this)->createHistogram1D(_histName::_residGblFitHistNameYDut4p, NBinp, MinXp, MaxXp);
 		
 
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameY0p, residGblFit0Yp));
@@ -460,6 +513,8 @@ void EUTelProcessorGBLTrackFit::bookHistograms() {
               _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameY5p, residGblFit5Yp));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut1p, residGblFitDut1Yp));
 	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut2p, residGblFitDut2Yp));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut3p, residGblFitDut3Yp));
+	      _aidaHistoMap1D.insert(std::make_pair(_histName::_residGblFitHistNameYDut4p, residGblFitDut4Yp));
 
 
 

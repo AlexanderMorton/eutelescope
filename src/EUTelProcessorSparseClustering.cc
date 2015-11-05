@@ -664,9 +664,9 @@ void EUTelProcessorSparseClustering::bookHistos() {
 		  histoInfo = histoMgr->getHistogramInfo( _clusterSizeXHistoName );
 		  if ( histoInfo ) {
 		    streamlog_out ( DEBUG2 ) << (* histoInfo ) << std::endl;
-		  /*  clusterXNBin = histoInfo->_xBin;
+		    clusterXNBin = histoInfo->_xBin;
 		    clusterXMin  = histoInfo->_xMin;
-		    clusterXMax  = histoInfo->_xMax;*/
+		    clusterXMax  = histoInfo->_xMax;
 		    if ( histoInfo->_title != "" ) clusterXTitle = histoInfo->_title;
 		  }
 		}
@@ -680,9 +680,9 @@ void EUTelProcessorSparseClustering::bookHistos() {
 		  histoInfo = histoMgr->getHistogramInfo( _clusterSizeYHistoName );
 		  if ( histoInfo ) {
 		    streamlog_out ( DEBUG2 ) << (* histoInfo ) << std::endl;
-		   /* clusterXNBin = histoInfo->_xBin;
-		    clusterXMin  = histoInfo->_xMin;
-		    clusterXMax  = histoInfo->_xMax;*/
+		    clusterYNBin = histoInfo->_xBin;
+		    clusterYMin  = histoInfo->_xMin;
+		    clusterYMax  = histoInfo->_xMax;
 		    if ( histoInfo->_title != "" ) clusterYTitle = histoInfo->_title;
 		  }
 		}
@@ -735,9 +735,9 @@ void EUTelProcessorSparseClustering::bookHistos() {
 		  histoInfo = histoMgr->getHistogramInfo(  _eventMultiplicityHistoName );
 		  if ( histoInfo ) {
 		    streamlog_out ( DEBUG2 ) << (* histoInfo ) << std::endl;
-		    /*eventMultiNBin  = histoInfo->_xBin;
+		    eventMultiNBin  = histoInfo->_xBin;
 		    eventMultiMin   = histoInfo->_xMin;
-		    eventMultiMax   = histoInfo->_xMax;*/
+		    eventMultiMax   = histoInfo->_xMax;
 		    if ( histoInfo->_title != "" ) eventMultiTitle = histoInfo->_title;
 		  }
 		}

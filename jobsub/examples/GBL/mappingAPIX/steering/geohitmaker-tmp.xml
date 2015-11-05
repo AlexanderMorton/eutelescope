@@ -94,6 +94,7 @@
   <!--If there are more then this number of correlated hits (planes->track candidate) (default=5)-->
   <!--parameter name="MinNumberOfCorrelatedHits" type="int">5 </parameter-->
   <!--reference hit collection name -->
+  <parameter name="DumpGEAR" type="bool" value="true" />
   <parameter name="ReferenceCollection" type="string">referenceHit </parameter>
   <!--Maximal values of the hit residuals in the X direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
   <parameter name="ResidualsXMax" type="FloatVec"> @ResidualsXMax@ </parameter>
@@ -108,6 +109,7 @@
   <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
   <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
  </processor>
+
 
  <processor name="Correlator" type="EUTelCorrelator">
  <!--EUTelCorrelator fills histograms with correlation plots-->

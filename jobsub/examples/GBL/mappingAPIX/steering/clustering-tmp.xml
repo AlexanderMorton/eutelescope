@@ -8,7 +8,7 @@
       <processor name="AIDA"/>
       <processor name="LoadHotPixelDB"/>
       <processor name="ClusteringMimosa"/>
-			<processor name="ClusteringAPIX"/>
+			<processor name="ClusteringAPIX"/>    
       <processor name="NoisyClusterMasker"/>
 			<processor name="NoisyClusterMaskerAPIX"/>
       <processor name="NoisyClusterRemover"/>
@@ -64,7 +64,7 @@
   <!--Switch on or off the histogram filling-->
   <parameter name="HistogramFilling" type="bool">true </parameter>
   <!--Cluster (output) collection name-->
-  <parameter name="PulseCollectionName" type="string" lcioOutType="TrackerPulse">cluster_m26 </parameter>
+  <parameter name="PulseCollectionName" type="string" lcioOutType="TrackerPulse">cluster_m26_free </parameter>
   <!--Time cut in time units of your sensor-->
   <!--parameter name="TCut" type="float">3.40282e+38 </parameter-->
   <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->

@@ -85,6 +85,7 @@ namespace eutelescope {
             EVENT::IntVec _excludePlanes;         
             int _mode;
             int _incMed;
+	    int _dutNum;
 
 			/** Number of events processed */
 			int _nProcessedRuns;
@@ -162,6 +163,8 @@ namespace eutelescope {
 						static std::string _residGblFitHistNameX5;
 	                                        static std::string _residGblFitHistNameXDut1;
 	  	                                static std::string _residGblFitHistNameXDut2;
+	                                        static std::string _residGblFitHistNameXDut3;
+	  	                                static std::string _residGblFitHistNameXDut4;
 	  					static std::string _residGblFitHistNameY0;
 						static std::string _residGblFitHistNameY1;
 						static std::string _residGblFitHistNameY2;
@@ -170,6 +173,8 @@ namespace eutelescope {
 						static std::string _residGblFitHistNameY5;
 	                                        static std::string _residGblFitHistNameYDut1;
 	                                        static std::string _residGblFitHistNameYDut2;
+	                                        static std::string _residGblFitHistNameYDut3;
+	                                        static std::string _residGblFitHistNameYDut4;
 
 						static std::string _residGblFitHistNameX0p;
 						static std::string _residGblFitHistNameX1p;
@@ -179,6 +184,8 @@ namespace eutelescope {
 						static std::string _residGblFitHistNameX5p;
 	                                        static std::string _residGblFitHistNameXDut1p;
 	                                        static std::string _residGblFitHistNameXDut2p;
+	                                        static std::string _residGblFitHistNameXDut3p;
+	                                        static std::string _residGblFitHistNameXDut4p;
 						static std::string _residGblFitHistNameY0p;
 						static std::string _residGblFitHistNameY1p;
 						static std::string _residGblFitHistNameY2p;
@@ -187,6 +194,8 @@ namespace eutelescope {
 						static std::string _residGblFitHistNameY5p;
 	                                        static std::string _residGblFitHistNameYDut1p;
 	                                        static std::string _residGblFitHistNameYDut2p;
+	                                        static std::string _residGblFitHistNameYDut3p;
+	                                        static std::string _residGblFitHistNameYDut4p;
 
         };
 
