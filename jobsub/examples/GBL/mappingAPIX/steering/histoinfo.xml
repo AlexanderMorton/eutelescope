@@ -41,6 +41,8 @@
     <histo name="seedSNR"           type="H1D" xBin="150" xMin="0"        xMax="100"/>
     <histo name="clusterSNR"        type="H1D" xBin="200" xMin="0"        xMax="150"/>
     <histo name="eventMultiplicity" type="H1D" xBin="60"  xMin="0"        xMax="60"/>
+    <histo name="clusterSizeX"      type="H1D" xBin="60"  xMin="0"        xMax="60"/>
+    <histo name="clusterSizeY"      type="H1D" xBin="60"  xMin="0"        xMax="60"/>
 
     <!-- EUTelCalculateEtaProcessor -->
     <!-- 

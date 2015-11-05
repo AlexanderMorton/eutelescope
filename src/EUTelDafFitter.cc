@@ -138,6 +138,7 @@ void EUTelDafFitter::dafEvent (LCEvent * event) {
     flag.setBit( LCIO::TRBIT_HITS );
     _fittrackvec->setFlag(flag.getFlag());
   }
+
   
   //Check found tracks
   for(size_t ii = 0; ii < _system.getNtracks(); ii++ ){
