@@ -69,6 +69,7 @@ std::vector<EUTelTrack> EUTelPatRecTriplets::getTracks(){
     EUTelNav::init(getBeamMomentum());
     setHitsVecPerPlane();
     testHitsVecPerPlane();
+    std::cout << "Mode: " << _mode << std::endl;
     std::vector<EUTelTrack>  tracks;
     if(_mode = 1){
         tracks = getMinFakeTracks();
@@ -585,6 +586,8 @@ std::vector<float>  EUTelPatRecTriplets::getDoubPosAtZ(doublets doub, float posZ
  */
 void EUTelPatRecTriplets::setHitsVecPerPlane()
 {
+    streamlog_out(DEBUG0) << "Begin to set hits....." << std::endl;
+
 	_mapHitsVecPerPlane.clear();
 	int numberOfPlanes = EUTelExcludedPlanes::_senInc.size();
 	
@@ -596,19 +599,27 @@ void EUTelPatRecTriplets::setHitsVecPerPlane()
 	{
 		throw(lcio::Exception( "The number of hits is zero."));
 	}
+    streamlog_out(DEBUG0) << "...." << std::endl;
 
 	for(int i=0 ; i<numberOfPlanes;++i)
 	{
+        streamlog_out(DEBUG0) << "Find plane:  " << numberOfPlanes << " ..."   << std::endl;
         std::vector<EUTelHit> tempHitsVecPlaneX; 
 		for(size_t j=0 ; j<_allHitsVec.size();++j)
 		{
+            streamlog_out(DEBUG0) << "Hit:  " << j << " ..."   << std::endl;
 			if(Utility::getSensorIDfromHit( static_cast<IMPL::TrackerHitImpl*>(_allHitsVec[j]) ) ==  EUTelExcludedPlanes::_senInc.at(i))
 			{
+                streamlog_out(DEBUG0) << " Found!"   << std::endl;
 				tempHitsVecPlaneX.push_back(EUTelHit(_allHitsVec.at(j)));
+                streamlog_out(DEBUG0) << " Found!2"   << std::endl;
+
 			}
 		}
 		_mapHitsVecPerPlane[  EUTelExcludedPlanes::_senInc.at(i)] = 	tempHitsVecPlaneX;
 	}	
+    streamlog_out(DEBUG0) << "Set hits per plane." << std::endl;
+
 }
 ///Other 
 void EUTelPatRecTriplets::printTrackQuality(std::vector<EUTelTrack>&  tracks )

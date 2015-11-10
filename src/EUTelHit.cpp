@@ -11,11 +11,16 @@ _cov(2,2)
 EUTelHit::EUTelHit(EUTelHit* hit):
 _cov(2,2)
 {
+    streamlog_out(DEBUG0) << "Position...."   << std::endl;
     _position[0] = hit->getPosition()[0];
     _position[1] = hit->getPosition()[1];
     _position[2] = hit->getPosition()[2];
+    streamlog_out(DEBUG0) << "Hit ID...."   << std::endl;
+
     _id = hit->getID();
+    streamlog_out(DEBUG0) << "Time...."   << std::endl;
     _time = hit->getTime();
+    streamlog_out(DEBUG0) << "Location...."   << std::endl;
     if(hit->_locationKnown){
         _location = hit->getLocation();
         _locationKnown=true;
@@ -30,11 +35,15 @@ _cov(2,2)
 EUTelHit::EUTelHit(EVENT::TrackerHit* hit):
 _cov(2,2)
 {
+    streamlog_out(DEBUG0) << "Position(TrackerHit)...."   << std::endl;
     _position[0] = hit->getPosition()[0] + geo::gGeometry().localDistDUT().at(0);
     _position[1] = hit->getPosition()[1] + geo::gGeometry().localDistDUT().at(1);
     _position[2] = hit->getPosition()[2];
+    streamlog_out(DEBUG0) << "Hit ID(TrackerHit)...."   << std::endl;
     _id = hit->id();
+    streamlog_out(DEBUG0) << "Time(TrackerHit)...."   << std::endl;
     _time = hit->getTime();
+    streamlog_out(DEBUG0) << "Hit Location(TrackerHit)...."   << std::endl;
     const int hitLoc = Utility::getSensorIDfromHit( static_cast<IMPL::TrackerHitImpl*> (hit) );
     _location = hitLoc;
     _pulse =hit->getRawHits().at(0);    

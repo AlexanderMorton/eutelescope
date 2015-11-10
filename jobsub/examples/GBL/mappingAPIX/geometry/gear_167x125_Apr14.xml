@@ -74,7 +74,7 @@
 						sizeX="20.0"            sizeY="16.8"            thickness="0.300" 
 						radLength="93.660734"
 						/>
-				  <sensitive    ID="20" 
+				  <sensitive    ID="22" 
 						positionX="0.00"        positionY="0.00"        positionZ="250.0"
 						sizeX="20.0"            sizeY="16.8"            thickness="0.300" 
 						npixelX="120"            npixelY="134"
@@ -93,7 +93,7 @@
 						sizeX="20.0"             sizeY="16.8"            thickness="0.300"
 						radLength="93.660734"
 						/>
-				  <sensitive      ID="21" 
+				  <sensitive      ID="23" 
 						  positionX="0.0"        positionY="0.0"       positionZ="270.0"
 						  sizeX="20.0"           sizeY="16.8"            thickness="0.300"
 						  npixelX="80"          npixelY="336"

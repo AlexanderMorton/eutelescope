@@ -177,7 +177,7 @@ std::vector<double>  EUTelNav::getCurvXY(){
     const double curvY = bFac[1]*omega; 
     std::vector<double> curv;
     curv.push_back(curvX); curv.push_back(curvY);
-    //streamlog_out(DEBUG0) << "The curvature calculated: " << curv.at(0) << "  " << curv.at(1) << std::endl;
+    streamlog_out(DEBUG0) << "The curvature calculated: " << curv.at(0) << "  " << curv.at(1) << std::endl;
 
     return curv;
 
