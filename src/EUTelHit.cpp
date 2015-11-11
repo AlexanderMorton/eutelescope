@@ -36,8 +36,8 @@ EUTelHit::EUTelHit(EVENT::TrackerHit* hit):
 _cov(2,2)
 {
     streamlog_out(DEBUG0) << "Position(TrackerHit)...."   << std::endl;
-    _position[0] = hit->getPosition()[0] + geo::gGeometry().localDistDUT().at(0);
-    _position[1] = hit->getPosition()[1] + geo::gGeometry().localDistDUT().at(1);
+    _position[0] = hit->getPosition()[0];
+    _position[1] = hit->getPosition()[1];
     _position[2] = hit->getPosition()[2];
     streamlog_out(DEBUG0) << "Hit ID(TrackerHit)...."   << std::endl;
     _id = hit->id();

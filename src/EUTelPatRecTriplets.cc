@@ -69,7 +69,7 @@ std::vector<EUTelTrack> EUTelPatRecTriplets::getTracks(){
     EUTelNav::init(getBeamMomentum());
     setHitsVecPerPlane();
     testHitsVecPerPlane();
-    std::cout << "Mode: " << _mode << std::endl;
+  //  std::cout << "Mode: " << _mode << std::endl;
     std::vector<EUTelTrack>  tracks;
     if(_mode = 1){
         tracks = getMinFakeTracks();
