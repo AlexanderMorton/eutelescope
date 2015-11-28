@@ -1,6 +1,7 @@
 #ifndef EUTELTRACK_H
 #define	EUTELTRACK_H
-
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
 #include "EUTelUtility.h"
 // ROOT
 #if defined(USE_ROOT) || defined(MARLIN_USE_ROOT)
@@ -57,6 +58,14 @@ namespace eutelescope {
             float _nDF;
 
 	};
+    #include <boost/python.hpp>
+    using namespace boost::python;
+
+    BOOST_PYTHON_MODULE(EUTelTrack)
+    {
+            class_<Reader>("EUTelTrack")
+                        .def("getStates", &EUTelTrack::getStates);
+    }
 
 }
 #endif

@@ -28,18 +28,18 @@
 
 namespace eutelescope {
 
-	class  EUTelProcessorTrackAnalysis : public marlin::Processor {
+	class  EUTelProcessorEventDisplay : public marlin::Processor {
 
   	private:
-  	DISALLOW_COPY_AND_ASSIGN(EUTelProcessorTrackAnalysis)
+  	DISALLOW_COPY_AND_ASSIGN(EUTelProcessorEventDisplay)
         
     public:
 
     virtual Processor* newProcessor() {
-    	return new  EUTelProcessorTrackAnalysis;
+    	return new  EUTelProcessorEventDisplay;
     }
 
-    EUTelProcessorTrackAnalysis();
+    EUTelProcessorEventDisplay();
 
     /** Called at the begin of the job before anything is read.
     * Use to initialize the processor, e.g. book histograms.
@@ -51,32 +51,10 @@ namespace eutelescope {
 
    	/** Called after data processing for clean up. **/
 		virtual void end();
-		void initialiseHitMapHistograms();
-		void initialiseResidualVsPositionHistograms();
-		void initialiseEfficiencyVsPositionHistograms();
-		
 		std::string _trackInputCollectionName;
-		EUTelTrackAnalysis* _analysis;
-		IntVec _sensorIDs;
-		std::map< int,  AIDA::IHistogram2D* > _mapFromSensorHitMap;
-		std::map< int,  AIDA::IProfile2D* > _mapFromSensorKinksMap;
-		std::map< int,  AIDA::IProfile2D* > _mapFromSensorIDToHistogramX;
-		std::map< int,  AIDA::IProfile2D* > _mapFromSensorIDToHistogramY;
-		std::map< int,  AIDA::IProfile2D* > _mapFromSensorIDToEfficiencyX;
-		std::map< int,  AIDA::IProfile2D* > _mapFromSensorIDToEfficiencyY;
-		std::map< int,  AIDA::IProfile2D* > _mapFromSensorIDToPValueHisto;
-		std::map< int,   AIDA::IHistogram1D *> _mapFromSensorIDToGloIncXZ;
-		std::map< int,  AIDA::IHistogram1D * > _mapFromSensorIDToGloIncYZ;
-		std::map< int,   AIDA::IHistogram1D *> _mapKinksX;
-		std::map< int,  AIDA::IHistogram1D * > _mapKinksY;
-
-		std::map< int,  AIDA::IProfile1D* > _mapFromSensorIDToPValuesVsIncidenceXZ;
-		std::map< int,  AIDA::IProfile1D* > _mapFromSensorIDToPValuesVsIncidenceYZ;
-		AIDA::IHistogram1D * _beamEnergy;
-		AIDA::IProfile1D *_pValueVsBeamEnergy;
-        std::string _histoInfoFileName;
+		IntVec _events;
 	};
 
-    EUTelProcessorTrackAnalysis gEUTelProcessorTrackAnalysis;
+    EUTelProcessorEventDisplay gEUTelProcessorEventDisplay;
 
 }
