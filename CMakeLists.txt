@@ -59,13 +59,40 @@ INCLUDE_DIRECTORIES( ${EIGEN2_INCLUDE_DIR} )
 # export GBL="/home/ilcsoft/v01-16-02/Eutelescope/HEAD/external/gbl/cpp"
 # the libs is here
 #
- FIND_PACKAGE( XERCESC )               
- FIND_PACKAGE( G4 )               
- FIND_PACKAGE( ALLPIX )               
+FIND_PACKAGE( XERCESC )               
+FIND_PACKAGE( G4 )               
+FIND_PACKAGE( ALLPIX )               
 # 
 # General Broken Line track fitter as shared lib:
- FIND_PACKAGE( GBL )
-
+FIND_PACKAGE( GBL )
+#Boost/python################
+FIND_PACKAGE(Boost 1.41.0  COMPONENTS python )
+IF(Boost_FOUND)
+    MESSAGE("Boost set")
+    INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}" "/usr/include/python2.6")
+    SET(Boost_USE_STATIC_LIBS OFF)
+    SET(Boost_USE_MULTITHREADED ON)
+    SET(Boost_USE_STATIC_RUNTIME OFF)
+    #  FIND_PACKAGE(Boost 1.41.0 COMPONENTS python)
+    ENDIF()
+#############
+#FIND_PACKAGE(Boost 1.41 COMPONENTS python REQUIRED)
+FIND_PACKAGE(PythonLibs REQUIRED)
+MESSAGE( "lib boost " ${Boost_LIBRARIES} )
+MESSAGE( "def boost " ${Boost_DEFINITIONS} )
+MESSAGE( "inc boost " ${Boost_INCLUDE_DIRS} )
+INCLUDE_DIRECTORIES(SYSTEM  ${Boost_INCLUDE_DIR})
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+ADD_DEFINITIONS ( ${Boost_DEFINITIONS} )
+FIND_PACKAGE(PythonLibs REQUIRED)
+IF(PYTHONLIBS_FOUND)
+ INCLUDE_DIRECTORIES("${PYTHON_INCLUDE_DIRS}")
+ # LINK_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+ELSE()
+ MESSAGE(FATAL_ERROR "Unable to find PythonLibs.")
+ENDIF()
+#set(CMAKE_SHARED_LINKER_FLAGSS   "-lboost_system -lboost_python -lpthread")
+###############
 FOREACH( pkg Marlin MarlinUtil GSL AIDA ROOT LCCD GBL XERCESC G4 ALLPIX )
     IF( ${pkg}_FOUND )
         # include as "system" libraries: gcc will be less verbose w.r.t. warnings
@@ -171,7 +198,33 @@ AUX_SOURCE_DIRECTORY( ./src library_sources )
 AUX_SOURCE_DIRECTORY( ./src/alibava library_sources )
 ADD_SHARED_LIBRARY( ${libname} ${library_sources} )
 INSTALL_SHARED_LIBRARY( ${libname} DESTINATION lib )
-#INSTALL_SHARED_LIBRARY( GBL DESTINATION lib )
+##########
+########################Boost
+IF( Boost_FOUND )
+    TARGET_LINK_LIBRARIES( ${libname} ${Boost_LIBRARIES} )
+ENDIF()
+############################
+
+#FIND_PACKAGE(Boost 1.41 COMPONENTS filesystem regex python REQUIRED)
+#MESSAGE(STATUS "** Boost Include: ${Boost_INCLUDE_DIR}")
+#MESSAGE(STATUS "** Boost Libraries: ${Boost_LIBRARY_DIRS}")
+#MESSAGE(STATUS "** Boost Libraries: ${Boost_LIBRARIES}")
+#
+#INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIR})
+#LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+#set(CMAKE_EXE_LINKER_FLAGS   "-lboost_system -lboost_python -lpthread")
+#set(CMAKE_SHARED_LINKER_FLAGSS   "-lboost_system -lboost_python -lpthread")
+#MESSAGE(STATUS "** Linker: ${CMAKE_EXE_LINKER_FLAGS}")
+#
+######Python
+#FIND_PACKAGE(PythonLibs REQUIRED)
+#IF(PYTHONLIBS_FOUND)
+# INCLUDE_DIRECTORIES("${PYTHON_INCLUDE_DIRS}")
+# LINK_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+#ELSE()
+# MESSAGE(FATAL_ERROR "Unable to find PythonLibs.")
+#ENDIF()
+#######
 
 #Pixel Geometry Shared Libraries
 FILE(GLOB IMPL_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/pixgeo/src/*.cc)

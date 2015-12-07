@@ -7,6 +7,7 @@
 #include "marlin/Global.h"
 #include "marlin/Processor.h"
 #include "marlin/VerbosityLevels.h"
+#include <boost/python.hpp>
 
 //EUTelescope
 #include "EUTelUtility.h"

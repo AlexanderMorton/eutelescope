@@ -137,4 +137,17 @@ void EUTelTrack::setTrackFromLCIOVec(std::vector<double> input){
     setQOverP(input.at(3));
 
 }
+BOOST_PYTHON_MODULE(EUTelTrack)
+{
+//        class_<EUTelTrack>("EUTelTrack");
+                    def("getChi2", &EUTelTrack::getChi2);
+
+        ///Must let 
+//        class_<EUTelTrack, boost::shared_ptr<EUTelTrack>  >("EUTelTrack")
+//                    .def("getChi2", &EUTelTrack::getChi2,return_value_policy<return_by_value>())
+//                    .def("print", &EUTelTrack::print,return_value_policy<return_by_value>())
+//                    .def("getStates", &EUTelTrack::getStates,return_value_policy<return_by_value>());
+//        ///Register what type of pointer we will pass to the python object 
+//        register_ptr_to_python< shared_ptr<EUTelTrack> >();
+}
 
