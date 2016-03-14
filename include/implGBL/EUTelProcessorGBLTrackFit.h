@@ -53,7 +53,7 @@ namespace eutelescope {
 
 	class EUTelProcessorGBLTrackFit : public marlin::Processor {
 
-		private:
+        private:
 			DISALLOW_COPY_AND_ASSIGN(EUTelProcessorGBLTrackFit)
 						
 		public:
@@ -63,35 +63,27 @@ namespace eutelescope {
 			}
 
 			EUTelProcessorGBLTrackFit();
-
-			/** Called at the begin of the job before anything is read.
-			 * Use to initialize the processor, e.g. book histograms.
-			 */
 			virtual void init();
-
-			/** Called for every run.
-			 */
 			virtual void processRunHeader(LCRunHeader* run);
-
-			/** Called for every event - the working horse.
-			 */
 			virtual void processEvent(LCEvent * evt);
-
-			/** Called after data processing for clean up. **/
-
 			virtual void end();
 
     protected:
-            EVENT::IntVec _excludePlanes;         
+            //!Set true if you just pass unparameterised tracks.    
+            /*!A sensible seed track must be created to propagate errors.
+             * This can be done internally or the external input can be used.  
+             */
             int _mode;
-            int _incMed;
-	    int _dutNum;
+            //!Homogeneous mediums can be excluded.    
+            /*!Only the thin scatterers are used in the medium estimate. Useful to exclude poorly calibrated(Guessed!) medium estimate.
+             *   
+             */
 
-			/** Number of events processed */
+            int _incMed;
+            int _dutNum;
+
 			int _nProcessedRuns;
-			/** Number of runs processed */
 			int _nProcessedEvents;
-			/** Number of runs processed */
 			int _nTrackCand;
 
 			/** Beam charge in [e] */

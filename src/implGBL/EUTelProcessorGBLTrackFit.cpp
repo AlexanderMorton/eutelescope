@@ -82,7 +82,6 @@ _mEstimatorType() //This is used by the GBL software for outliers down weighting
 
 	//This is the determines the how we down weight our outliers. This by default is set that each point will have the same weighting.
   registerOptionalParameter("GBLMEstimatorType", "GBL outlier down-weighting option (t,h,c)", _mEstimatorType, std::string() );
-  registerOptionalParameter("ExcludePlanes", "This is the planes that will not be included in analysis", _excludePlanes ,IntVec());
   registerOptionalParameter("Mode", "Will this processor do the track parameterisation for you. 1 => yes 0 => no ", _mode ,int(1));
   registerOptionalParameter("IncMed", "Do you want to include the medium as addtional scattering", _incMed ,int(0));
   registerOptionalParameter("chi2Cut", "Cut for output track.", _chi2Cut ,double(1000.0));
