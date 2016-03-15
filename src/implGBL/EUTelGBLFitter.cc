@@ -167,25 +167,8 @@ namespace eutelescope {
 		}
 	}
 
-	//This is used to deal with downweighting of ouliers. You must provide as input t,h or c. This specifies the function that will be used to do the downweigting.
-	//TO DO: Check that this function works as expected since it has never been used. 
 	void EUTelGBLFitter::setMEstimatorType( const std::string& estimatorType ) {
-		std::string estimatorTypeLowerCase = estimatorType;
-		std::transform( estimatorType.begin(), estimatorType.end(), estimatorTypeLowerCase.begin(), ::tolower);//Make the character lower case
-		if ( estimatorType.size() != 1 ) {
-			streamlog_out( WARNING1 ) << "More than one character supplied as M-estimator option" << std::endl;
-			streamlog_out( WARNING1 ) << "No M-estimator downweighting will be used" << std::endl;
-			return;
-		}
-		//Compare character to the ones that are accepted and if one is the same then set out member variable equal to it.
-		if ( estimatorTypeLowerCase.compare("t") == 0 || estimatorTypeLowerCase.compare("h") == 0 || estimatorTypeLowerCase.compare("c") == 0   ){
-			streamlog_out( MESSAGE5 ) << "M-estimator: " << estimatorTypeLowerCase << std::endl;
-
-            this->_mEstimatorType = estimatorTypeLowerCase;
-        }else {
-			streamlog_out( WARNING1 ) << "M-estimator option " <<  estimatorTypeLowerCase<< " was not recognized" << std::endl;
-			streamlog_out( WARNING1 ) << "No M-estimator downweighting will be used" << std::endl;
-		}
+        this->_mEstimatorType = estimatorType;
 	}
 
 
@@ -322,46 +305,6 @@ namespace eutelescope {
 		streamlog_out(DEBUG0)<<"EUTelGBLFitter::getGBLPointsFromTrack-------------------------------------END"<<std::endl;
 
 	}
-    std::vector<double> EUTelGBLFitter::getWeigMeanVar(double & start, double & end){
-        std::vector<double> weigPosVar;
-        if(end == 0){
-        throw(lcio::Exception("The size of arc length to the next plane is 0"));
-        }
-        double mean = 0.5*(end-start);
-        if(mean == 0){
-        throw(lcio::Exception("The mean of the scattering integral is zero. "));
-        }
-        /// Assume uniform medium. This is the variance of arclength weighted to radiation length at each point
-        /// Does not depend on material if distribution is constant.
-         double weigVar = ((1.0/3.0)*(pow(end,3)-pow(start,3))-mean*(pow(end,2)-pow(start,2))+pow(mean,2)*(end-start))/(end-start);
-        if(weigVar == 0){
-            throw(lcio::Exception("The variance of the scattering integral is zero. "));
-        }
-        weigPosVar.push_back(mean);
-        weigPosVar.push_back(weigVar);
-        return weigPosVar;
-    }
-  //  std::vector<double> EUTelGBLFitter::getZPosScat(EUTelState & state){
-  //  streamlog_out(DEBUG1) << "  findScattersZPositionBetweenTwoStates------------- BEGIN --------------  " << std::endl;
-  //  ///Take first scatterer just off the surface. This will be along the particle trajectory.
-  //  double start = 0.05;
-  //  double end = state.getArcLengthToNextState();
-  //  std::vector<double> weigPar  = getWeigMeanVar(start,end);
-  //  std::vector<double> scatPos;
-  //  ///First scatter position
-  //  scatPos.push_back(start); 
-  //  if(scatPos.at(0) < start){
-  //      throw(lcio::Exception("The distance of the second scatterer is smaller than the start. "));
-  //  }
-  //  ///Second scatter position.
-  //  scatPos.push_back(weigPar.at(0) + weigPar.at(1)/(weigPar.at(0)-start));
-  //  if(scatPos.at(1) > end){
-  //      streamlog_out(MESSAGE5) << "The second scatter distance: "<< scatPos.at(1) <<". The distance of the arc length: " << end  << std::endl;
-  //      throw(lcio::Exception("The distance of the second scatterer is larger than the next plane. "));
-  //  }
-  //      streamlog_out(DEBUG1) << "  findScattersZPositionBetweenTwoStates------------- END --------------  " << std::endl;
-  //      return scatPos;
-  //  }
     void EUTelGBLFitter::initNav(){
         EUTelNav::init(getBeamEnergy());
     }

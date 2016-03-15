@@ -109,15 +109,7 @@ namespace eutelescope {
 			void setMillepede( EUTelMillepede* mille ) { _MilleInterface =  mille; }
 			void setParamterIdXResolutionVec( const std::vector<float>& );
 			void setParamterIdYResolutionVec( const std::vector<float>& );
-            //! Pass the binary file to store trajectory.   
-            /*!     
-             *   
-             * @param[in] mille
-             */
-            std::vector<double> getWeigMeanVar(double &, double &);
 
-
-            /// This is the down weighting certain hits will get due to non Gaussian errors.
 			void setMEstimatorType( const std::string& );
             ///This function will create the information needed to place the scatterers at the correct location and with the correct variance. 
             /**
