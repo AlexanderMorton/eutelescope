@@ -1,20 +1,7 @@
-/**  EUTelGBLFitter
- * 
- *  This is the link between GBL and EUTelescope. 
- *  This is all the functions to create and analysis GBL trajectories directly.
- *  Everything you need to know about the GBL functions can be found here: http://www.desy.de/~kleinwrt/GBL/doc/cpp/html/index.html 
- *  The functions here describe how to create a GBL trajectory and then analysis the direct output. 
- *  Further analysis of the EUTelTrack objects, GBL tracks saved in a generic LCIO container.
- *  An example of the use of this processor is in EUTelProcessorGBLFitter and EUTelProcessorGBLAlign.
- *  contact:alexander.morton975@gmail.com 
- */
-
 #ifdef USE_GBL
-
 #ifndef EUTELGBLFITTER_H
 #define	EUTELGBLFITTER_H
 
-// eutelescope includes ".h"
 #include "EUTelUtility.h"
 #include "EUTelTrack.h"
 #include "EUTelState.h"
@@ -23,26 +10,17 @@
 #include "EUTelTrackCreate.h"
 #include "EUTelBlock.h"
 #include "EUTelExcludedPlanes.h"
-// EVENT includes
 #include <IMPL/TrackerHitImpl.h>
 #include <EVENT/LCCollection.h>
-
-// LCIO includes
 #include <IMPL/LCCollectionVec.h>
 #include <IMPL/TrackerHitImpl.h>
 #include <IMPL/TrackImpl.h>
 #include <IMPL/LCFlagImpl.h>
 #include "lcio.h"
 #include "LCIOTypes.h"
-
-// ROOT
 #include "TMatrixD.h"
-
-// GBL
 #include "include/GblTrajectory.h"
 #include "include/MilleBinary.h"
-
-// system includes <>
 #include <map>
 #include <string>
 #include <algorithm>
@@ -60,49 +38,82 @@ namespace eutelescope {
 			EUTelGBLFitter();
 			~EUTelGBLFitter();
            void  initNav();
-           ///\todo Internal parameterisation will only work for tracks with a hits on 0,2,3,5 
- 
-            /// This function will add the measurement to the GBL point. 
-            /// Internally a projection matrix is used to link the global frame to the local one. 
-            /**
-             * \param [in] point GBL point which the measurement will be added to 
-             * \param [in]  State  This is the EUTelState with measurement information
-             */
+           //!Create point from EUTelState 
+           /*!This function will add the measurement to the GBL point. 
+            * Internally a projection matrix is used to link the global frame to the local one. 
+            * @param[in] point GBL point which the measurement will be added. 
+            * @param[in] state  This is the EUTelState with the measurement information
+            */
 
 			void setMeasurementGBL(gbl::GblPoint& point,EUTelState& );
-            /// This function will add the scattering to the GBL point. 
-            /// Internally a projection matrix is used to link the track frame to the local/global one 
-            /**
-             * \param [in] point GBL point which the measurement will be added to 
-             * \param [in]  State  This is the EUTelState with measurement information
+            //! This function will add the scattering to the GBL point. 
+            /*! Track incidence of the state is used to determine local frame covariance matrix due to scattering  
+             *
+             * @param[in] point GBL point which the measurement will be added to 
+             * @param[in] state This is the EUTelState with measurement information
+             * @param[in] var The variance at that location.  
              */
 
 			void setScattererGBL(gbl::GblPoint& point,EUTelState & state,double & );
-            void setScattererMedGBL(gbl::GblPoint& point,TVectorD& kinks, double& varMed );
-
-            /// Will take a track and fill it with information about it's radiation length 
-            /// This is split between radiation length of the included planes and radiation length in front of it.
-            /// Excluded planes are included in the radiation length in front of the included sensors. 
-            /**
-             * \param [in] track 
+            //! This function will add the scattering to the GBL point. 
+            /*! The kink angle and expected variance must be determined before hand.   
+             *  Make sure the track is consistant between points! 
+             * @param[in] point GBL point which the measurement will be added to 
+             * @param[in] Kinks for this point 
+             * @param[in] var The variance at that location.  
              */
 
-            double getRad(EUTelTrack &, std::map<const int,double>&, std::map<const int,double>&);
-            std::vector<double> getZPosScat(EUTelState &);
+            void setScattererMedGBL(gbl::GblPoint& point,TVectorD& kinks, double& varMed );
+            //!  Determine the z positions of GBL points to model the thick scatterer.
+            /*!  All homogeneous blocks in the gear file will have two points with two kink angle measurements added.   
+             *   
+             * @param[in] state  
+             */
 
-            /// A simple way to set hits covariance matrix.
+//            std::vector<double> getZPosScat(EUTelState &);
+            //! Will set the resolution of a state.  
+            /*! This will either use the default input or the geometry of the pixel.    
+             *   
+             * @param[in] state  
+             */
+
 			void setMeasurementCov(EUTelState& state);
             inline void setBeamEnergy(double beamE) { this->_eBeam = beamE; }
-            inline void setMode(int mode) { this->_mode = mode; }
-            inline void setIncMed(int incMed) { this->_incMed = incMed; }
+            //! Use internal parameterisation or not.    
+            /*! If you only have a set of hits then set to 1.     
+             *   
+             * @param[in] mode 1 for internal parameterisation.
+             */
 
-            /// This links the binary created in millepede to GBLFitter.
+            inline void setMode(int mode) { this->_mode = mode; }
+            //! Set if medium between detector planes should included.  
+            /*!     
+             *   
+             * @param[in] incMed    
+             */
+
+            inline void setIncMed(int incMed) { this->_incMed = incMed; }
+            //! Pass the binary file to store trajectory.   
+            /*!     
+             *   
+             * @param[in] mille
+             */
+
 			void SetMilleBinary(gbl::MilleBinary* mille) { this->_mille = mille; }
-            ///Links the EUTelMillepede class to EUTelGBLFitter.
+            //! The millepede class is passed to determine the global parameters.   
+            /*! Could set this up in a better way.    
+             *   
+             * @param[in] mille
+             */
+
 			void setMillepede( EUTelMillepede* mille ) { _MilleInterface =  mille; }
-            /// Resolution of the points in the local frame X/Y
 			void setParamterIdXResolutionVec( const std::vector<float>& );
 			void setParamterIdYResolutionVec( const std::vector<float>& );
+            //! Pass the binary file to store trajectory.   
+            /*!     
+             *   
+             * @param[in] mille
+             */
             std::vector<double> getWeigMeanVar(double &, double &);
 
 

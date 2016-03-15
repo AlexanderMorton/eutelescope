@@ -1,6 +1,3 @@
-#ifndef EUTELESCOPEPROCESSORGBLTRACKFIT_H
-#define	EUTELESCOPEPROCESSORGBLTRACKFIT_H
-
 #ifdef USE_GBL
 
 // C++
@@ -24,19 +21,6 @@
 
 //GBL
 #include "include/GblTrajectory.h"
-
-// AIDA
-#ifdef MARLIN_USE_AIDA
-#include <AIDA/AIDA.h>
-#include <marlin/AIDAProcessor.h>
-#include <AIDA/IHistogramFactory.h>
-#include <AIDA/IPlotterFactory.h>
-#include <AIDA/IAnalysisFactory.h>
-#include <AIDA/IPlotter.h>
-#include <AIDA/IHistogram1D.h>
-#include <AIDA/IProfile2D.h>
-#endif // MARLIN_USE_AIDA
-
 //EUTelescope
 #include "EUTelUtility.h"
 #include "EUTelGeometryTelescopeGeoDescription.h"
@@ -68,7 +52,7 @@ namespace eutelescope {
 			virtual void processEvent(LCEvent * evt);
 			virtual void end();
 
-    protected:
+    private:
             //!Set true if you just pass unparameterised tracks.    
             /*!A sensible seed track must be created to propagate errors.
              * This can be done internally or the external input can be used.  
@@ -80,120 +64,30 @@ namespace eutelescope {
              */
 
             int _incMed;
-            int _dutNum;
-
-			int _nProcessedRuns;
-			int _nProcessedEvents;
 			int _nTrackCand;
-
-			/** Beam charge in [e] */
 			double _beamQ;
-
-			//Beam energy. 
 			double _eBeam;
-			//This is the maximum chi2 of a track that will be used in the millepede alignment fit
-			double _maxChi2Cut;
-            double _chi2Cut;
-
+            ///A silly old check.
 			std::vector<float> _chi2NdfVec;
-			//Pointer to access millepede object..
 			EUTelMillepede* _Mille;
-
-
-			/** Input TrackerHit collection name */
 			std::string _trackCandidatesInputCollectionName;
-
-			/** Output Tracks collection name */
 			std::string _tracksOutputCollectionName;
+            //!Apply variable weights to estimate Cauchy/Huber/Tukey influence function. Should be used with noisey data.     
+            /*!Different combinations of the function can be applied. As an example, "hc" =>Cauchy then Huber applied. 
+             *   
+             */
 
-			/** Outlier downweighting option */
 			std::string _mEstimatorType;
-
-        /** Histogram info file name */
-			std::string _histoInfoFileName;
-
-			/** x Resolution of planes in PlaneIds */
+            //!If this is applied then the resolution is not calculated internally.      
+            /*!The TGeo object is used directly. 
+             *   
+             */
 			FloatVec _SteeringxResolutions;
- 
-			/** y Resolution of planes in PlaneIds */
 			FloatVec _SteeringyResolutions;
-
-			/** Track fitter */
 			EUTelGBLFitter *_trackFitter;
-			//Function defined now for the processor////////////////////////////
 			void outputLCIO(LCEvent* evt, std::vector< EUTelTrack >& tracks);
 
-			void bookHistograms();
-
-			void plotResidual(std::map< int, std::map<float, float > >  & sensorResidual, std::map< int, std::map<float, float > >  & sensorResidualError);
-				
-//TO DO: Fix all this histogramming stuff.
-#if defined(USE_AIDA) || defined(MARLIN_USE_AIDA)
-        /** AIDA histogram map
-         *  Instead of putting several pointers to AIDA histograms as
-         *  class members, histograms are booked in the init() method and
-         *  their pointers are inserted into this map keyed by their
-         *  names.
-         *  The histogram filling can proceed recalling an object through
-         *  its name
-         */
-	std::map< std::string, AIDA::IHistogram1D* > _aidaHistoMap1D;
-	std::map< int, AIDA::IHistogram1D* > _mapSensorIDToHistogramCorrection0;
-	std::map< int, AIDA::IHistogram1D* > _mapSensorIDToHistogramCorrection1;
-	std::map< int, AIDA::IHistogram1D* > _mapSensorIDToHistogramCorrection2;
-	std::map< int, AIDA::IHistogram1D* > _mapSensorIDToHistogramCorrection3;
-	std::map< int, AIDA::IHistogram1D* > _mapSensorIDToHistogramCorrection4;
-        /** Names of histograms */
-        struct _histName {
-						static std::string _chi2CandidateHistName;
-						static std::string  _fitsuccessHistName;
-						static std::string _residGblFitHistNameX0;
-						static std::string _residGblFitHistNameX1;
-						static std::string _residGblFitHistNameX2;
-						static std::string _residGblFitHistNameX3;
-						static std::string _residGblFitHistNameX4;
-						static std::string _residGblFitHistNameX5;
-	                                        static std::string _residGblFitHistNameXDut1;
-	  	                                static std::string _residGblFitHistNameXDut2;
-	                                        static std::string _residGblFitHistNameXDut3;
-	  	                                static std::string _residGblFitHistNameXDut4;
-	  					static std::string _residGblFitHistNameY0;
-						static std::string _residGblFitHistNameY1;
-						static std::string _residGblFitHistNameY2;
-						static std::string _residGblFitHistNameY3;
-						static std::string _residGblFitHistNameY4;
-						static std::string _residGblFitHistNameY5;
-	                                        static std::string _residGblFitHistNameYDut1;
-	                                        static std::string _residGblFitHistNameYDut2;
-	                                        static std::string _residGblFitHistNameYDut3;
-	                                        static std::string _residGblFitHistNameYDut4;
-
-						static std::string _residGblFitHistNameX0p;
-						static std::string _residGblFitHistNameX1p;
-						static std::string _residGblFitHistNameX2p;
-						static std::string _residGblFitHistNameX3p;
-						static std::string _residGblFitHistNameX4p;
-						static std::string _residGblFitHistNameX5p;
-	                                        static std::string _residGblFitHistNameXDut1p;
-	                                        static std::string _residGblFitHistNameXDut2p;
-	                                        static std::string _residGblFitHistNameXDut3p;
-	                                        static std::string _residGblFitHistNameXDut4p;
-						static std::string _residGblFitHistNameY0p;
-						static std::string _residGblFitHistNameY1p;
-						static std::string _residGblFitHistNameY2p;
-						static std::string _residGblFitHistNameY3p;
-						static std::string _residGblFitHistNameY4p;
-						static std::string _residGblFitHistNameY5p;
-	                                        static std::string _residGblFitHistNameYDut1p;
-	                                        static std::string _residGblFitHistNameYDut2p;
-	                                        static std::string _residGblFitHistNameYDut3p;
-	                                        static std::string _residGblFitHistNameYDut4p;
-
-        };
-
-#endif // defined(USE_AIDA) || defined(MARLIN_USE_AIDA)
-
-	};
+    };
 
 /** A global instance of the processor */
 EUTelProcessorGBLTrackFit gEUTelProcessorGBLTrackFit;
@@ -202,4 +96,3 @@ EUTelProcessorGBLTrackFit gEUTelProcessorGBLTrackFit;
 
 #endif // USE_GBL
 
-#endif	/* EUTELESCOPEPROCESSORGBLFITCANDIDATES_H */

@@ -1,33 +1,15 @@
 #ifdef USE_GBL
-
-// its own header 
 #include "EUTelGBLFitter.h"
-
-// eutelescope includes ".h"
 #include "EUTelGeometryTelescopeGeoDescription.h"
 #include "EUTELESCOPE.h"
 #include "EUTelNav.h"
-
-// marlin util includes
 #include "mille/Mille.h"
-
-// ROOT
-#if defined(USE_ROOT) || defined(MARLIN_USE_ROOT)
-#include "TVector3.h"
-#else
-#error *** You need ROOT to compile this code.  *** 
-#endif
-
-// GBL
 #include "include/GblTrajectory.h"
 #include "include/GblPoint.h"
 #include "include/GblData.h"
 #include "include/BorderedBandMatrix.h"
 #include "include/MilleBinary.h"
 #include "include/VMatrix.h"
-
-
-// system includes <>
 #include <map>
 #include <string>
 #include <utility>
@@ -35,7 +17,6 @@
 #include <iomanip>
 #include <iterator>
 #include <algorithm>
-
 #include "EUTelTrack.h"
 #include "EUTelState.h"
 #include "EUTelHit.h"
@@ -58,12 +39,10 @@ namespace eutelescope {
 	{
     EUTelExcludedPlanes();
     }
-    ///\todo Mode is set in only some processors. GBLAlign does not bother so it is set to internal parameterisation.  
 
 
 	EUTelGBLFitter::~EUTelGBLFitter() {
 	}
-	//THIS IS THE SETTERS. Not simple get function but the action of all these functions it in the end to set a member variable to something.	
 	void EUTelGBLFitter::setMeasurementCov(EUTelState& state){
         std::vector<double> hitcov(4);
 		int izPlane = state.getLocation();
@@ -80,10 +59,9 @@ namespace eutelescope {
 		streamlog_out(DEBUG0) << "SET COVARIANCE: State: " << state.getLocation() << "  Covariance X/Y  : " << hitcov[0] << " " <<hitcov[3] <<std::endl; 
 		state.getHit().setCov(hitcov);
 	}
-	//Note that we take the planes themselfs at scatters and also add scatterers to simulate the medium inbetween. 
 	void EUTelGBLFitter::setScattererGBL(gbl::GblPoint& point,EUTelState & state, double& varSen ) {
 		streamlog_out(DEBUG1) << " setScattererGBL ------------- BEGIN --------------  " << std::endl;
-		TMatrixDSym precisionMatrix =  state.getScatteringVarianceInLocalFrame(varSen );
+		TMatrixDSym precisionMatrix =  state.getScatteringVarianceInLocalFrame(varSen);
 		streamlog_out(MESSAGE1) << "The precision matrix being used for the sensor  "<<state.getLocation()<<":" << std::endl;
 		streamlog_message( DEBUG0, precisionMatrix.Print();, std::endl; );
 		point.addScatterer(state.getKinks(), precisionMatrix);
@@ -353,7 +331,7 @@ namespace eutelescope {
         if(mean == 0){
         throw(lcio::Exception("The mean of the scattering integral is zero. "));
         }
-        /// Assume uniform medium. The this is the variance of arclength weighted to radiation length at each point
+        /// Assume uniform medium. This is the variance of arclength weighted to radiation length at each point
         /// Does not depend on material if distribution is constant.
          double weigVar = ((1.0/3.0)*(pow(end,3)-pow(start,3))-mean*(pow(end,2)-pow(start,2))+pow(mean,2)*(end-start))/(end-start);
         if(weigVar == 0){
@@ -363,27 +341,27 @@ namespace eutelescope {
         weigPosVar.push_back(weigVar);
         return weigPosVar;
     }
-    std::vector<double> EUTelGBLFitter::getZPosScat(EUTelState & state){
-    streamlog_out(DEBUG1) << "  findScattersZPositionBetweenTwoStates------------- BEGIN --------------  " << std::endl;
-    ///Take first scatterer just off the surface. This will be along the particle trajectory.
-    double start = 0.05;
-    double end = state.getArcLengthToNextState();
-    std::vector<double> weigPar  = getWeigMeanVar(start,end);
-    std::vector<double> scatPos;
-    ///First scatter position
-    scatPos.push_back(start); 
-    if(scatPos.at(0) < start){
-        throw(lcio::Exception("The distance of the second scatterer is smaller than the start. "));
-    }
-    ///Second scatter position.
-    scatPos.push_back(weigPar.at(0) + weigPar.at(1)/(weigPar.at(0)-start));
-    if(scatPos.at(1) > end){
-        streamlog_out(MESSAGE5) << "The second scatter distance: "<< scatPos.at(1) <<". The distance of the arc length: " << end  << std::endl;
-        throw(lcio::Exception("The distance of the second scatterer is larger than the next plane. "));
-    }
-        streamlog_out(DEBUG1) << "  findScattersZPositionBetweenTwoStates------------- END --------------  " << std::endl;
-        return scatPos;
-    }
+  //  std::vector<double> EUTelGBLFitter::getZPosScat(EUTelState & state){
+  //  streamlog_out(DEBUG1) << "  findScattersZPositionBetweenTwoStates------------- BEGIN --------------  " << std::endl;
+  //  ///Take first scatterer just off the surface. This will be along the particle trajectory.
+  //  double start = 0.05;
+  //  double end = state.getArcLengthToNextState();
+  //  std::vector<double> weigPar  = getWeigMeanVar(start,end);
+  //  std::vector<double> scatPos;
+  //  ///First scatter position
+  //  scatPos.push_back(start); 
+  //  if(scatPos.at(0) < start){
+  //      throw(lcio::Exception("The distance of the second scatterer is smaller than the start. "));
+  //  }
+  //  ///Second scatter position.
+  //  scatPos.push_back(weigPar.at(0) + weigPar.at(1)/(weigPar.at(0)-start));
+  //  if(scatPos.at(1) > end){
+  //      streamlog_out(MESSAGE5) << "The second scatter distance: "<< scatPos.at(1) <<". The distance of the arc length: " << end  << std::endl;
+  //      throw(lcio::Exception("The distance of the second scatterer is larger than the next plane. "));
+  //  }
+  //      streamlog_out(DEBUG1) << "  findScattersZPositionBetweenTwoStates------------- END --------------  " << std::endl;
+  //      return scatPos;
+  //  }
     void EUTelGBLFitter::initNav(){
         EUTelNav::init(getBeamEnergy());
     }
