@@ -276,7 +276,6 @@ namespace eutelescope {
         }
     }
 
-    ///This is the work horse of the GBL fitter. It creates GBL points from EUTelTracks and returns the relations between the two.
 	void EUTelGBLFitter::getGBLPointsFromTrack(EUTelTrack& track, std::vector< gbl::GblPoint >& pointList){
 		streamlog_out(DEBUG0)<<"EUTelGBLFitter::getGBLPointsFromTrack-------------------------------------BEGIN"<<std::endl;
         //Do the parameterisartion internally. 
@@ -306,25 +305,6 @@ namespace eutelescope {
         EUTelNav::init(getBeamEnergy());
     }
 
-    void EUTelGBLFitter::getResLoc(gbl::GblTrajectory* traj,EUTelTrack& track , std::vector< gbl::GblPoint > pointList,std::map< int, std::map< float, float > > &  SensorResidual, std::map< int, std::map< float, float > >& sensorResidualError){
-    for(std::vector<EUTelState>::iterator itSt = track.getStates().begin(); itSt != track.getStates().end(); ++itSt){
-        if(itSt->getStateHasHit()){
-            unsigned int numData; 
-            TVectorD aResiduals(2);
-            TVectorD aMeasErrors(2);
-            TVectorD aResErrors(2);
-            TVectorD aDownWeights(2); 
-            traj->getMeasResults(itSt->GBLLabels.at(0), numData, aResiduals, aMeasErrors, aResErrors, aDownWeights);
-            streamlog_out(DEBUG0) <<"State location: "<<itSt->getLocation()<<" The residual x " <<aResiduals[0]<<" The residual y " <<aResiduals[1]<<std::endl;
-            std::map<float, float> res;  
-            res.insert(std::make_pair(aResiduals[0],aResiduals[1]));
-            SensorResidual.insert(std::make_pair(itSt->getLocation(), res));		
-            std::map<float, float> resError; 
-            resError.insert(std::make_pair(aResErrors[0],aResErrors[1]));
-            sensorResidualError.insert(std::make_pair(itSt->getLocation(), resError));	
-        }
-	}
-  }
 	std::string EUTelGBLFitter::getMEstimatorType( ) const {
 			return _mEstimatorType;
 	}

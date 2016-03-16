@@ -119,44 +119,44 @@ namespace eutelescope {
              * @param [out] pointList This is the points which describe the EUTelTrack without any measurements (Scattering and residuals) 
              */
             void getBasicList( EUTelTrack & ,std::vector< gbl::GblPoint >& pointList);   
-            /// This will create the needed GBL points from EUTelTracks.
-            /// This will create the GBL points from the states and the needed scatterering points.  
-            /**
-             * \param [in]   track EUTelTrack 
-             * \param [out]  pointList vector of GBL points
+            //! This will create the needed GBL points from EUTelTracks.
+            /*! This will create the GBL points from the states and the needed scatterering points.  
+             *
+             * @param [in]   track EUTelTrack 
+             * @param [out]  pointList vector of GBL points
              */
 
 			void getGBLPointsFromTrack(EUTelTrack&, std::vector< gbl::GblPoint >&);
-            /// Add measurement to the trajectory. Measurement in local frame.
-            /// Note local frame makes the description of the error easy to describe externally.  
-            /**
-             * \param [in]   track EUTelTrack 
-             * \param [in]  pointList vector of GBL points
-             * \param [in]  linkGL Link between points with local->global transform and GBL point 
-             * \param [out]  linkMeas Link between states with a measurement for position and GBL point.
+            //! Add measurement to the trajectory. Measurement in local frame.
+            /*! Note local frame is defined as the surface of the sensor. The measurement frame is the frame in which the covariance matrix is diagonal.  
+             *  All uncertainties are diagonalised internally by the GBL algorithm implemented.
+             * @param [in]   track EUTelTrack 
+             * @param [in]  pointList vector of GBL points
+             * @param [in]  linkGL Link between points with local->global transform and GBL point 
+             * @param [out]  linkMeas Link between states with a measurement for position and GBL point.
              */
 
             void getMeas(EUTelTrack&, std::vector< gbl::GblPoint >&);
-            /// Add Scattering information to GBL trajectories. Kinks are in local frame. 
-            /// All planes with no global to local transforms will be assumed to have normal incidence on a plane. 
-            /// Note here that kink angles are always measured in the local frame and therefore the precision matrix is also.
-            /// The kink angle precision matrix is non diagonal in the local frame but in the frame in which the measurement of kink is on a plane perpendicular to the track
-            /// it is diagonal.
-            /// Internally this transform takes place. Note this transform is not between the local and global frame. It is between the frame perpendicular to the track 
-            /// and plane of incidence. Transforms between frames will make no difference it is the relative incidence which counts.
-            ///   
-            /**
-             * \param [in]   track EUTelTrack 
-             * \param [in]  pointList vector of GBL points
+            //! Add Scattering information to GBL trajectories. 
+            /*! Kinks are in local frame since they are the same as adding a residual measurement on a plane. 
+             *  All planes with no global to local transform will be assumed to have normal incidence on a plane. 
+             *  Note here that kink angles are always measured in the local frame and therefore the precision matrix of those measurements.
+             *  The kink angle precision matrix is non diagonal in the local frame but in the frame in which the measurement of kink is on a plane perpendicular to the track
+             *  it is diagonal.
+             *  Internally this transform takes place. Note this transform is not between the local and global frame. It is between the frame perpendicular to the track 
+             *  and plane of incidence. Transforms between frames will make no difference it is the relative incidence which counts.
+             *  @param [in]   track EUTelTrack 
+             *  @param [in]  pointList vector of GBL points
              */
 
             void getScat(EUTelTrack&, std::vector< gbl::GblPoint >&);
-            /// Get the corrections for the GBL trajectories for states. Also update track automatically. 
-            ///   
-            /**
-             * \param [in]   GBLtraj GBL trajectory 
-             * \param [in]   EUTelTrack track to update.
-             * \param [out]  corrections This is a map from sensor ID to vector. 
+            //! Get the corrections for the GBL trajectories for states.  
+            /*!   
+             *
+             * @param [in]   GBLtraj GBL trajectory 
+             * @param [in]   EUTelTrack track to update.
+             * @param [out]  corrections This is a map from sensor ID to vector. 
+             * @todo Must clean this up.
              */
 			void getCorr(gbl::GblTrajectory* , EUTelTrack& ,std::map<int,std::vector<double> >& );
             /// Get the corrections for the GBL trajectories for states. Also update track automatically. 
