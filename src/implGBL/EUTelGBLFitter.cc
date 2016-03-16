@@ -284,7 +284,6 @@ namespace eutelescope {
             initNav();
             track = EUTelTrackCreate::getTrackFourHits(track.getHitsCopy());
         }
-      //  setArcLengths(track);
         EUTelRadCal radCal;
         radCal.setRad(track,_incMed);
         /// This is the minimum needed to create a GBL trajectory. It basically only relates each GBL point to each other at this stage.
@@ -427,15 +426,6 @@ namespace eutelescope {
                 foundScat=true;
                 scatSt = &state;
             }
-        }
-    }
-    void EUTelGBLFitter::setArcLengths(EUTelTrack & track){
-        for(std::vector<EUTelState>::iterator itState = track.getStates().begin(); itState != --track.getStates().end(); itState++){
-            TVector3 gPos1 = itState->getPositionGlobal();
-            TVector3 gPos2 = (itState+1)->getPositionGlobal();
-            TVector3 diff = gPos2 - gPos1;
-            double arc = diff.Mag();
-            itState->setArcLengthToNextState(arc);
         }
     }
 

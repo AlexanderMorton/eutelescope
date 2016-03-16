@@ -159,43 +159,32 @@ namespace eutelescope {
              * @todo Must clean this up.
              */
 			void getCorr(gbl::GblTrajectory* , EUTelTrack& ,std::map<int,std::vector<double> >& );
-            /// Get the corrections for the GBL trajectories for states. Also update track automatically. 
-            ///   
-            /**
-             * \param [in]   GBLtraj GBL trajectory 
-             * \param [in]   track EUTeltrack so we know which points are from the planes
-             * \param [in]   pointList used to check that this list is correct. 
-             * \param [out]  residuals Residuals error associated to the correct sensor ID
-             * \param [out]  error this is the residual error associated to that sensorID. 
+            //! This is the function which links the GBL track to millepede.cc object. 
+            /*! Millepede has global labels internally stored for setup and fixed alignment constants. 
+             *  Alignment Jacobain is then calculated and attached to each point with labels. 
+             *
+             * @param [in]   vector GBLpoints  
+             * @param [out]   EUTelTrack track to update.
              */
-			void getResLoc(gbl::GblTrajectory*, EUTelTrack &, std::vector< gbl::GblPoint >, std::map< int, std::map< float, float > > & , std::map< int, std::map< float, float > >&);
-             /// This is the function which links the GBL track to millepede.cc object. 
-             /// Millepede has global labels internal. Jacobain is then calcualted and attached to point with labels . 
-            /**
-             * \param [in]   vector GBLpoints  
-             * \param [in]   EUTelTrack track to update.
-             */
-
 			void getGloPar(std::vector< gbl::GblPoint >& , EUTelTrack&);
+            //! Add local parameters to plane 271 to determine kink angles at that point. 
+            /*!  
+             * @param [in]   vector GBLpoints  
+             * @param [in]   EUTelTrack track to update.
+             */
             void getLocalKink(EUTelTrack& track, std::vector< gbl::GblPoint >& pointList);
-
 			inline double getBeamEnergy() const { return _eBeam; }
 			std::string getMEstimatorType() const;
-			///TEST
 			void testUserInput();
 			void testTrack(EUTelTrack& track);
-			///COMPUTE
-            /// This will fit the trajectory and output the chi2 and ndf 
-            ///   
-            /**
-             * \param [in]   GBLtraj GBL trajectory 
-             * \param [out]  chi2 
-             * \param [out]  ndf 
-             * \param [out]  error code that tells you if there was a problem from GBL.
+            //! This will fit the trajectory and output the chi2 and ndf 
+            /*!   
+             * @param [in]   GBLtraj GBL trajectory 
+             * @param [out]  chi2 
+             * @param [out]  ndf Number of degrees of freedom 
+             * @param [out]  error code that tells you if there was a problem from GBL.
              */
-
 			void computeTrajectoryAndFit(gbl::GblTrajectory* traj, double* chi2, int* ndf, int & ierr);
-            void setArcLengths(EUTelTrack & track);
 
     protected:
             int _numberRadLoss;
