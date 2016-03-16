@@ -111,20 +111,12 @@ namespace eutelescope {
 			void setParamterIdYResolutionVec( const std::vector<float>& );
 
 			void setMEstimatorType( const std::string& );
-            ///This function will create the information needed to place the scatterers at the correct location and with the correct variance. 
-            /**
-             * \param [in] track 
-             * \param [out]  scatPos Where we want to place the scatterers after the plane. 
-             */
-
-    		std::map< unsigned int, std::vector<double> > getScatPos(EUTelTrack&) const;
-            /// This will create the point list which describes each points relation to one another.
-            /// At this stage only the points with a local to global transform and the ones which do not must be saved. 
-            /// This is done using the position of the scatterers which is calculated internally.
-            /// The scatterers are all assumed  
-            /**
-             * \param [in] track This is the measurement and scattering planes. These must have Local->Global relation. 
-             * \param [out] pointList This is the points which describe the EUTelTrack without any measurements (Scattering and residuals) 
+            //! This will create the point list which describes each points relation to one another.
+            /*! The propagation from plane i to i+1 is saved in point i+1. 
+             *  No measurement information is added only the geometric location of the points and there linking together.
+             *
+             * @param [in] track This is the measurement and scattering planes. These must have Local->Global relation. 
+             * @param [out] pointList This is the points which describe the EUTelTrack without any measurements (Scattering and residuals) 
              */
             void getBasicList( EUTelTrack & ,std::vector< gbl::GblPoint >& pointList);   
             /// This will create the needed GBL points from EUTelTracks.

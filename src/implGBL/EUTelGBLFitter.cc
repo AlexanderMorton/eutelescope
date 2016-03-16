@@ -171,9 +171,6 @@ namespace eutelescope {
         this->_mEstimatorType = estimatorType;
 	}
 
-
-	std::map<  unsigned int, std::vector<double> > EUTelGBLFitter::getScatPos(EUTelTrack& track) const {}
-
 	void EUTelGBLFitter::getBasicList(EUTelTrack & track, std::vector< gbl::GblPoint >& pointList){
         TMatrixD jac(5, 5);
         jac.UnitMatrix();
@@ -184,7 +181,7 @@ namespace eutelescope {
         track.getStates().at(0).GBLLabels.push_back(label);
         label++;
         pointList.push_back(point);
-        ///IN GBL the propagation from plane 0 to 1 is stored in point 1 associated to plane 1. Strange but this is the convention.
+        ///IN GBL the propagation from plane 0 to 1 is stored in point 1 associated to plane 1. 
         ///This is done due to the decomposition of the jacobian within GBL.
         for(std::vector<EUTelState>::iterator itSt = track.getStates().begin();itSt != (track.getStates().end()-1); ++itSt){		
             Block block =  itSt->block;  
