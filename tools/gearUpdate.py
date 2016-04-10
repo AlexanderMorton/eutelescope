@@ -4,7 +4,14 @@ Created on Jul 8, 2015
 
 @author: A.Morton
 '''
-import argparse
+haveArgParse=True
+try:
+    import argparse
+except ImportError:
+    print "No arg parse"
+    import getopt
+    haveArgParse=False
+
 from xml.dom.minidom import parse 
 import sys
 import shutil
@@ -71,6 +78,7 @@ def getInfo(resVec):
     IDModeRes = []
     link = [ "positionX" , "positionY","positionZ","rotationZY","rotationZX","rotationXY"] 
     for res in resVec:
+        #print "res ",res
         par = list(res[0]);
         ID = ""
         mode = ""
@@ -149,17 +157,45 @@ def screen(IDModeRes):
 
 #We might want to import this at some point. Remove this then.
 if __name__ == '__main__':
+    if haveArgParse:
+        print "ArgParse"
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-o', help="The old gear file", default="gear.xml")
+        parser.add_argument('-n', help="The new gear file location to save. (Give new name too)", default="gear.xml")
+        parser.add_argument('-r', help="The results file",default="millepede.res" )
+        args = parser.parse_args()
+        resVec = getVector(args.r)
+        IDModeRes =  getInfo(resVec)
+        IDModeResCor =  screen(IDModeRes)
+        print "The alignment parameters to update with these corrections:"
+        for imr in IDModeResCor:
+            print "The sensor ID: ", imr[0] , " Type: ", imr[1], " Value: ", imr[2] , " Error: ", imr[3]
+        updateGear(IDModeResCor,args.o,args.n)
+    else:
+      #  print "Not ArgParse"
+        try:
+            opts, args = getopt.getopt(sys.argv[1:],"o:n:r:")
+        except getopt.GetoptError:
+            sys.exit(2)
+      #  print "opts ",opts , " args ", args
+        for opt, arg in opts:
+            if opt == '-h':
+                sys.exit()
+            elif opt in ("-o"):
+        #        print "found1, ", arg
+                og = arg
+            elif opt in ("-n"):
+         #       print "found2, ", arg
+                ng = arg
+            elif opt in ("-r"):
+          #      print "found3, ", arg
+                resVec = getVector(arg)
+                IDModeRes =  getInfo(resVec)
+                IDModeResCor =  screen(IDModeRes)
+           #     print "res ID " , IDModeResCor
+        print "The alignment parameters to update with these corrections:"
+        for imr in IDModeResCor:
+            print "The sensor ID: ", imr[0] , " Type: ", imr[1], " Value: ", imr[2] , " Error: ", imr[3]
+            updateGear(IDModeResCor,og,ng)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-og', help="The old gear file", default="gear.xml")
-    parser.add_argument('-ng', help="The new gear file location to save. (Give new name too)", default="gear.xml")
-    parser.add_argument('-r', help="The results file",default="millepede.res" )
-    args = parser.parse_args()
-    resVec = getVector(args.r)
-    IDModeRes =  getInfo(resVec)
-    IDModeResCor =  screen(IDModeRes)
 
-    print "The alignment parameters to update with these corrections:"
-    for imr in IDModeResCor:
-        print "The sensor ID: ", imr[0] , " Type: ", imr[1], " Value: ", imr[2] , " Error: ", imr[3]
-    updateGear(IDModeResCor,args.og,args.ng)
