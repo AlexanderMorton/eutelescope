@@ -33,6 +33,7 @@
 #include "TAxis.h"
 #include <TFile.h>
 #include <TH1F.h>
+#include <TF1.h>
 #include <THStack.h>
 #include <TH1.h>
 #include <TGaxis.h>
