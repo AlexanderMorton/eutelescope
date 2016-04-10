@@ -181,7 +181,19 @@ void EUTelProcessorTrackSelection::end(){
 //        totalChi.Fit("Chi2","L");
         totalChi.SetFillColor(kBlue);
         totalChi.Write();
-        totalChi.Draw("F");
+        TF1 pdf("pdf", "ROOT::Math::chisquared_pdf(x, [0], [1])",0,20);
+        pdf.SetParameters(1,1);
+        pdf.FixParameter(1,1);
+        totalChi.Fit(&pdf,"LV+");
+//        totalChi.Draw("F");
+//  totalChi.Scale(totalChi.Integral());//Normalise to the number of events
+        totalChi.Draw("hist");
+        Double_t par[6];
+        pdf.GetParameters(par);
+        std::cout << "Par " << par[0] << " " << par[1] << std::endl;
+        pdf.Draw("same");
+        ctot.Write();
+        pdf.Write();
 
      //   gStyle->SetOptStat(00011210);
         double leg_pos[4] = {0.72, 0.68, 0.84, 0.78};///Should use array.
@@ -200,6 +212,9 @@ void EUTelProcessorTrackSelection::end(){
         stack.Add(_chi2Hists.first.get());
         stack.Add(_chi2Hists.second.get());
 //   stack.GetXaxis()->SetTitle("Tracks");
+//        TF1 *f1 = new TF1("f1", "gaus", -5, 5);
+//        TH1D *stackHist = (TH1D*)(stack->GetStack()->Last());
+//        stackHist->Fit(f1);
         c.SetLeftMargin(0.13);
         c.SetRightMargin(0.075);
         c.SetGrid();
@@ -331,12 +346,26 @@ void EUTelProcessorTrackSelection::end(){
             stack.Add(&newBinPass);
             stack.Add(&newBinFail);
             TCanvas c(name.c_str(),name.c_str(), 1260, 500);
-            c.cd();
+            c.Divide(4);
             gStyle->SetOptStat(1100);
             c.SetLeftMargin(0.13);
             c.SetRightMargin(0.075);
             c.SetGrid();
 //            stack.Write();
+            TF1 *f1 = new TF1("f1", "gaus", min, max);
+            TH1D *stackHist = (TH1D*)(stack.GetStack()->Last());
+            stackHist->Write();
+            c.cd(1);
+         //   stackHist->Fit("gaus","Q");
+            stack.Draw();
+            c.cd(2);
+        //    stackHist->Fit("gaus","VE");
+            stack.Draw();
+            c.cd(3);
+        //    stackHist->Fit("gaus","IE");
+            stack.Draw();
+            c.cd(4);
+        //    stackHist->Fit("gaus","VLE");
             stack.Draw();
           //  leg.Draw();
             c.Write();
