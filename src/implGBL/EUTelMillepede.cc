@@ -360,7 +360,7 @@ void EUTelMillepede::outputSteeringFiles(){
 }
 void EUTelMillepede::getNewGear(){
     ///Must create string explicitly on right had side. Since c++ does not have + char operator.
-    const string command = std::string("gearUpdate ") + " -og " + Global::parameters->getStringVal("GearXMLFile" )  + " -r " + _milleResultFileName + " -ng " +  _newGear;
+    const string command = std::string("gearUpdate ") + " -o " + Global::parameters->getStringVal("GearXMLFile" )  + " -r " + _milleResultFileName + " -n " +  _newGear;
 	streamlog_out ( MESSAGE5 ) << command << std::endl;
 	redi::ipstream updateGear( command.c_str( ), redi::pstreams::pstdout | redi::pstreams::pstderr );
 
