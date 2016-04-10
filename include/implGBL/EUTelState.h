@@ -38,8 +38,8 @@ namespace eutelescope {
 
             std::vector<double> getLCIOOutput();
 			float getArcLengthToNextState() const {return _arcLength;} 
-			TVector3 getPositionGlobal() const; 
-            Eigen::Vector3d getPositionGlobalEig() const; 
+//			TVector3 getPositionGlobal() const; 
+            Eigen::Vector3d getPositionGlobal() const; 
 			const bool getStateHasHit() const;
             /// This will get the link between the local and global frames. 
             /// GBL Fitter expects the link to be give from global to local. 
