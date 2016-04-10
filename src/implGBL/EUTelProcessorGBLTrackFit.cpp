@@ -110,7 +110,6 @@ void EUTelProcessorGBLTrackFit::processEvent(LCEvent* evt){
 				_trackFitter->getCorr(traj,track, mapSensorIDToCorrectionVec);
 				std::map< int, std::map< float, float > >  SensorResidual; 
 				std::map< int, std::map< float, float > >  SensorResidualError; 
-				_trackFitter->getResLoc(traj,track, pointList, SensorResidual, SensorResidualError);
 			}else{
 				streamlog_out(DEBUG5) << "Ierr is: " << ierr << " Do not update track information " << std::endl;
 				continue;//We continue so we don't add an empty track
