@@ -91,7 +91,7 @@ void EUTelTrackAnalysis::plotKinksVsPosition(EUTelTrack track){
 	for(size_t i=0; i<states.size();++i){
 		EUTelState state  = states.at(i);
 		state.print();
-		TVector3 statePositionGlobal = state.getPositionGlobal();
+		Eigen::Vector3d statePositionGlobal = state.getPositionGlobal();
 		typedef std::map<int ,AIDA::IProfile2D*  >::iterator it_type;
 		for(it_type iterator = _mapFromSensorKinksMap.begin(); iterator != _mapFromSensorKinksMap.end(); iterator++) {
 		  streamlog_out(DEBUG2) << "	state.getLocation() = "<<	state.getLocation()<< ", iterator->first = "<<iterator->first<<std::endl;	
@@ -119,7 +119,7 @@ void EUTelTrackAnalysis::plotResidualVsPosition(EUTelTrack track){
 		}
 		EUTelHit hit = state.getHit();	
 		const double* statePosition = state.getPosition();
-		TVector3 statePositionGlobal = state.getPositionGlobal();
+		Eigen::Vector3d statePositionGlobal = state.getPositionGlobal();
 		const double* hitPosition = hit.getPosition();
 		float residual[2];
 		if(statePositionGlobal[0]>8)streamlog_out(DEBUG2) << "*** HELEN ***** statePositionGlobal[0]>8 ********"<< std::endl;
@@ -161,7 +161,7 @@ void EUTelTrackAnalysis::plotHitMap(EUTelTrack track){
 		EUTelState state  = states.at(i);
 		state.print();
 		const double* statePosition = state.getPosition();
-		TVector3 statePositionGlobal = state.getPositionGlobal();
+        Eigen::Vector3d statePositionGlobal = state.getPositionGlobal();
 	streamlog_out(DEBUG2) << " EUTelTrackAnalysis::plotHitMap------------------------------still here"<< std::endl;
 
 		typedef std::map<int ,AIDA::IHistogram2D*  >::iterator it_type;
@@ -202,7 +202,7 @@ void EUTelTrackAnalysis::plotEfficiencyVsPosition(EUTelTrack track, IntVec senso
 		streamlog_out(DEBUG0) << " In state loop, "<<i<<" out of "<< states.size()<<" state.getStateHasHit() = "<<state.getStateHasHit()<<std::endl;
 		EUTelHit hit;
 		//statePosition = state.getPosition();
-		TVector3 statePositionGlobal = state.getPositionGlobal();
+		Eigen::Vector3d statePositionGlobal = state.getPositionGlobal();
 		if(state.getStateHasHit()){
 		  hit = state.getHit();	
 		  //streamlog_out(DEBUG2)<<"hit on location "<<state.getLocation()<<" has time "<<hit.getTime()<<std::endl;
@@ -384,7 +384,7 @@ void EUTelTrackAnalysis::plotPValueWithPosition(EUTelTrack track){
 		EUTelState state  = states.at(i);
 		state.print();
 
-		TVector3 statePosition = state.getPositionGlobal();
+		Eigen::Vector3d statePosition = state.getPositionGlobal();
 		streamlog_out(DEBUG2) << "State position: " << statePosition[0]<<","<<statePosition[1]<<","<<statePosition[2]<< std::endl;
 
 		typedef std::map<int ,AIDA::IProfile2D*  >::iterator it_type;
