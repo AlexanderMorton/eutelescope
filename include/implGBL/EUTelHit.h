@@ -12,12 +12,19 @@
 #include "EUTelGeometryTelescopeGeoDescription.h"
 
 namespace eutelescope {
+  //! EUTelHit object is a class to store and manipulate hit information.
+  /*!
+   */ 
 
 	class  EUTelHit{
 		public: 
 			EUTelHit();
 			EUTelHit(EUTelHit* hit);
 			EUTelHit(EVENT::TrackerHit* hit);
+            //! Set position of hit in local frame. 
+            /*! 
+             *  @param[in] position Position (x,y,z) 
+             */
             void setPosition(const double * position);
             void setID(int id);
             void setTime(float time);
@@ -31,18 +38,19 @@ namespace eutelescope {
             void setCov(const TVectorD& cov);
             void setWeight(const TVectorD& wei);
             void setPulse( EVENT::LCObject*);
-
-            //get
             void getCov(double (&)[4]) const;
             TMatrixD getCov() const {return _cov;};
-            TVector3 getPositionGlobal() const; 
+//            TVector3 getPositionGlobal() const; 
 			int	getLocation() const;
-            //HIT PARAMETERS
             const double* getPosition() const; 
             int getID() const;
             EVENT::LCObject* getPulse();
             std::vector<double> getWeight();
             float getTime() const;
+            //! Global track position in Eigen format 
+            /*! 
+             */
+            Eigen::Vector3d getPositionGlobal() const;
 
             //END HIT PARAMETERS
             //print
@@ -50,7 +58,6 @@ namespace eutelescope {
 
             std::vector<double> getLCIOOutput(); 
 			bool operator==(const EUTelHit compareHit ) const;
-
   	protected:
 		    double _position[3];	
             int _location; 
