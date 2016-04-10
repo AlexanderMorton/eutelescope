@@ -6,6 +6,8 @@ _locationKnown(false),
 _cov(2,2),
 _weight()
 {
+    _weight.push_back(0);
+    _weight.push_back(0);
     _cov.Zero();
 } 
 
@@ -72,14 +74,23 @@ int EUTelHit::getLocation() const {
 }
 
 
-TVector3 EUTelHit::getPositionGlobal() const {
+//TVector3 EUTelHit::getPositionGlobal() const {
+//	const double* local =  getPosition();
+//	const double posLocal[3] = {local[0],local[1],local[2]};
+//  double posGlobal[3];
+//	geo::gGeometry().local2Master(getLocation() ,posLocal,posGlobal);
+//	TVector3 posGlobalVec(posGlobal[0],posGlobal[1],posGlobal[2]);
+//	return posGlobalVec;
+//}
+Eigen::Vector3d EUTelHit::getPositionGlobal() const {
 	const double* local =  getPosition();
 	const double posLocal[3] = {local[0],local[1],local[2]};
-  double posGlobal[3];
+    double posGlobal[3];
 	geo::gGeometry().local2Master(getLocation() ,posLocal,posGlobal);
-	TVector3 posGlobalVec(posGlobal[0],posGlobal[1],posGlobal[2]);
-	return posGlobalVec;
+    Eigen::Vector3d posGEig(posGlobal[0],posGlobal[1],posGlobal[2]);
+	return posGEig;
 }
+
 
 int EUTelHit::getID() const {
     return _id;
