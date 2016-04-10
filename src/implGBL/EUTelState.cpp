@@ -107,23 +107,23 @@ Eigen::Vector3d EUTelState::getDirGlobalEig() const {
 }
 
 
-TVector3 EUTelState::getPositionGlobal() const {
+//TVector3 EUTelState::getPositionGlobal() const {
+//	const double* local =  getPosition();
+//	const double posLocal[3] = {local[0],local[1],local[2]};
+//  double posGlobal[3];
+//	geo::gGeometry().local2Master(getLocation() ,posLocal,posGlobal);
+//	TVector3 posGlobalVec(posGlobal[0],posGlobal[1],posGlobal[2]);
+//	return posGlobalVec;
+//}
+
+Eigen::Vector3d EUTelState::getPositionGlobal() const {
+	streamlog_out( DEBUG1 ) << "EUTelState::getDirGlobalEig()------------------------BEGIN" << std::endl;
 	const double* local =  getPosition();
 	const double posLocal[3] = {local[0],local[1],local[2]};
-  double posGlobal[3];
+    double posGlobal[3];
 	geo::gGeometry().local2Master(getLocation() ,posLocal,posGlobal);
-	TVector3 posGlobalVec(posGlobal[0],posGlobal[1],posGlobal[2]);
-	return posGlobalVec;
-}
-
-Eigen::Vector3d EUTelState::getPositionGlobalEig() const {
-	streamlog_out( DEBUG1 ) << "EUTelState::getDirGlobalEig()------------------------BEGIN" << std::endl;
-
-    Eigen::Vector3d posE;
-    TVector3 pos = getPositionGlobal();
-    posE << pos[0] , pos[1] , pos[2];
-	streamlog_out( DEBUG1 ) << "EUTelState::getDirGlobalEig()------------------------END" << std::endl;
-
+	Eigen::Vector3d posE(posGlobal[0],posGlobal[1],posGlobal[2]);
+	streamlog_out( DEBUG1 ) << "EUTelState::getDirGlobal()------------------------END" << std::endl;
     return posE;
 }
 
@@ -332,7 +332,7 @@ void EUTelState::setStateUsingCorrection(TVectorD& corrections, TMatrixDSym& cov
     ///operates on global change in position to get change on plane defined in global frame. 
     Eigen::Vector3d corrE = drldm*gPosCorr; 
 //    std::cout<< "Correction on plane " << corrE[0]  << " " << corrE[1] << " " <<corrE[2] << " Sensor " << this->getLocation()  <<std::endl;
-    Eigen::Vector3d  gPos = this->getPositionGlobalEig();
+    Eigen::Vector3d  gPos = this->getPositionGlobal();
     gPos = gPos + gPosCorr;
     /// Add correction in global frame and transform back to local internally 
 	double corr[3] = { gPos[0],gPos[1],gPos[2]};
