@@ -185,7 +185,7 @@ namespace eutelescope {
         ///This is done due to the decomposition of the jacobian within GBL.
         for(std::vector<EUTelState>::iterator itSt = track.getStates().begin();itSt != (track.getStates().end()-1); ++itSt){		
             Block block =  itSt->block;  
-            TVector3 diff = (itSt+1)->getPositionGlobal() - (itSt)->getPositionGlobal();
+             Eigen::Vector3d diff = (itSt+1)->getPositionGlobal() - (itSt)->getPositionGlobal();
          //   std::cout<<"states" <<std::endl;
             itSt->print();
             (itSt+1)->print();
@@ -193,7 +193,7 @@ namespace eutelescope {
 
             ///If any of this information is missing can not create thick scatterer.
             if(block.medRadPer == 0 or block.weigMean == 0 or block.weigVar == 0){
-                TMatrixD jac = EUTelNav::getPropagationJacobianGlobalToGlobal(diff.Mag(), itSt->getDirGlobal());
+                TMatrixD jac = EUTelNav::getPropagationJacobianGlobalToGlobal(diff.squaredNorm(), itSt->getDirGlobal());
                 gbl::GblPoint point(jac);
                 point.setLabel(label);
                 (itSt+1)->GBLLabels.push_back(label);
@@ -201,11 +201,14 @@ namespace eutelescope {
                 pointList.push_back(point);
             }else{///If information is there for thick scatter create them using two points to model it.
                 double lastPos=0;
-                std::vector<double> pos = block.scatPos; pos.push_back(diff.Mag());//Add this so we get to the next included plane
+                std::vector<double> pos = block.scatPos; pos.push_back(diff.squaredNorm());//Add this so we get to the next included plane
+                streamlog_out(DEBUG5) << "diff vector " << diff << std::endl;
             //    std::cout<< "size pos: " << pos.size()  <<"  " << pos[0] << " " << pos[1] << "  " <<pos[2] <<std::endl;
                 for(std::vector<double>::iterator itPos = pos.begin();itPos != pos.end(); ++itPos){		
                     double diff = *itPos -lastPos; 
                     lastPos = *itPos;
+                    streamlog_out(DEBUG5) << "diff " << diff << std::endl;
+
                     TMatrixD jac = EUTelNav::getPropagationJacobianGlobalToGlobal(diff, itSt->getDirGlobal());
                     gbl::GblPoint point(jac);
                     point.setLabel(label);
@@ -303,10 +306,6 @@ namespace eutelescope {
     void EUTelGBLFitter::initNav(){
         EUTelNav::init(getBeamEnergy());
     }
-
-	std::string EUTelGBLFitter::getMEstimatorType( ) const {
-			return _mEstimatorType;
-	}
 	//COMPUTE
 	void EUTelGBLFitter::computeTrajectoryAndFit(gbl::GblTrajectory* traj, double* chi2, int* ndf, int & ierr){
 		streamlog_out ( DEBUG4 ) << " EUTelGBLFitter::computeTrajectoryAndFit-- BEGIN " << std::endl;
