@@ -156,6 +156,7 @@ INCLUDE_DIRECTORIES( ./include )
 INCLUDE_DIRECTORIES( ./include/alibava )
 INCLUDE_DIRECTORIES( ./pixgeo/include/ )
 INCLUDE_DIRECTORIES( ./include/implGBL )
+#INCLUDE_DIRECTORIES( ./src/analysis/SCT_Analysis)
 
 # definitions to pass to the compiler
 ADD_DEFINITIONS( "-Wall -std=c++11 -pedantic -Wextra" )

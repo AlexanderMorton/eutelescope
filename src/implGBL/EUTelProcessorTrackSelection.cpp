@@ -170,11 +170,11 @@ void EUTelProcessorTrackSelection::end(){
     //    _chi2Hists.second.get()->Write();
     //    _chi2Hists.first.get()->Write();
 ///        TH1F chi2Total("Chi2 Total","Chi2 Total",100,0,20);
-        TCanvas ctot("TotChi2","Total Chi2", 1260, 500);
+        TCanvas ctot("TotChi2","Chi2/Ndof", 1260, 500);
         ctot.cd();
         gStyle->SetOptStat(1100);
 //        gStyle->SetOptFit(1111);
-        TH1F totalChi("Total Chi2","Total Chi2", 100,0,20);
+        TH1F totalChi("TotChi2","Chi2/Ndof", 100,0,20);
         totalChi.SetFillColor(kBlue);
         totalChi.Add(_chi2Hists.first.get());
         totalChi.Add(_chi2Hists.second.get());
@@ -254,7 +254,7 @@ void EUTelProcessorTrackSelection::end(){
                  std::cout<< "Hists do not have enough hits to be plotted together. " << label <<" Entries " <<hist.first.get()->GetEntries() << " " <<hist.second.get()->GetEntries()  << std::endl;
           //      hist.first.get()->Write();
           //      hist.second.get()->Write();
-                continue;
+            //    continue;
             }
             //Pass bin
             Int_t binsPass =   hist.first.get()->GetXaxis()->GetNbins(); 
@@ -303,7 +303,7 @@ void EUTelProcessorTrackSelection::end(){
                 }
             }
             ///Set total for further analysis. 
-            name =" Total " +  label + " Sensor " + std::to_string(EUTelExcludedPlanes::_senInc.at(i));
+            name =label + " Sensor " + std::to_string(EUTelExcludedPlanes::_senInc.at(i));
             TH1F totalVar(name.c_str(),name.c_str(), 300,min,max);
             totalVar.SetFillColor(kBlue);
             totalVar.Add(&newBinPass);
@@ -406,7 +406,7 @@ void EUTelProcessorTrackSelection::trackPlot(EUTelTrack & track,bool& pass)
 
 
 
-  //          std::cout << "The weights passed: "<< state.getHit().getWeight().at(0) << " " << state.getHit().getWeight().at(1)<<std::endl;
+//            std::cout << "The weights passed: "<< state.getHit().getWeight().at(0) << " " << state.getHit().getWeight().at(1)<<std::endl;
         }else{
             std::string key =  _labels.at(0)+std::to_string(state.getLocation());
             _hists[key].second.get()->Fill(state.getRes().at(0));
@@ -441,7 +441,7 @@ void EUTelProcessorTrackSelection::trackPlot(EUTelTrack & track,bool& pass)
             _hists[key].second.get()->Fill(sqrt(covState[2][2]));
             key =  _labels.at(15)+std::to_string(state.getLocation());
             _hists[key].second.get()->Fill(sqrt(covState[1][1]));
-//            std::cout << "The weights failed: "<< state.getHit().getWeight().at(0) << " " << state.getHit().getWeight().at(1)<<std::endl;
+ //           std::cout << "The weights failed: "<< state.getHit().getWeight().at(0) << " " << state.getHit().getWeight().at(1)<<std::endl;
         }
     }
 
