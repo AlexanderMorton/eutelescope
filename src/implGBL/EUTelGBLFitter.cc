@@ -1,3 +1,4 @@
+#define USE_GBL
 #ifdef USE_GBL
 #include "EUTelGBLFitter.h"
 #include "EUTelGeometryTelescopeGeoDescription.h"

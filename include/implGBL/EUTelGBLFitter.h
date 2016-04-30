@@ -1,3 +1,4 @@
+#define USE_GBL
 #ifdef USE_GBL
 #ifndef EUTELGBLFITTER_H
 #define	EUTELGBLFITTER_H
@@ -211,7 +212,13 @@ namespace eutelescope {
             int _mode;
             int _incMed;
             double _dutDistCut;
-			/** Outlier downweighting option */
+			/** Outlier downweighting options 
+			*   This applies the Huber, Cauchy or Turky weights.
+			*   The application of the m-estimator is due via a iterated reweighted least-squares problem. 
+			*   Each iteration can have a different weight function used.
+			*   The main point of this is to downweight possible outliers un the track fit.
+			*
+			*/
 			std::string _mEstimatorType;
 			/** Milipede binary file handle */
 			gbl::MilleBinary* _mille;
