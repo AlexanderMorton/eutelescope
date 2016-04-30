@@ -1,4 +1,3 @@
-
 #ifndef EUTELMILLEPEDE_H
 #define	EUTELMILLEPEDE_H
 
@@ -27,24 +26,21 @@
 #include "include/MilleBinary.h"
 #include "EUTelExceptions.h"
 #include "EUTelExcludedPlanes.h"
-//!  
+//!
 /*!  EUTelMillepede
 *  This class constains all the functions related to millepede.
 *  So creation of steering files, results and other interactions with millepede.
 */
 
-
 namespace eutelescope {
-
 	class EUTelMillepede {
-
 	public:
 		EUTelMillepede(std::string&, std::string&);
 		~EUTelMillepede();
 
 		//!This take a state and outputs a its alignment jacobian given the alignment mode
 		void computeAlignmentToMeasurementJacobian(EUTelState& state);
-		//! The alignment jacobian is calculated for the sensor and state.   
+		//! The alignment jacobian is calculated for the sensor and state.
 		/*! This will be attached to the jacobian within this class.
 		 *
 		 */
@@ -52,33 +48,33 @@ namespace eutelescope {
 		//! Determine which global labels from the state location.
 		void setGlobalLabels(EUTelState& state);
 
-		//! This function will create the initial steering file given the global parameters created when we initialised the EUTelMillepede object. 
+		//! This function will create the initial steering file given the global parameters created when we initialised the EUTelMillepede object.
 		/*! This steering file is given the name: _milleSteeringFilename
 		 *
 		 * \param [in] Commands This is solution method and chi2 cut.
 		 */
 
 		void writeMilleSteeringFile(lcio::StringVec pedeSteerAddCmds);
-		//! The will run pede using the steering file created and linked to _milleSteeringFilename.  
+		//! The will run pede using the steering file created and linked to _milleSteeringFilename.
 		/*! Results file is linked to _milleResultFileName
 		 *
 		 * \param[return] Correct Did pede run correctly?
 		 */
 
 		bool runPede();
-		//! Old parseMilleOut.  
-		/*! This function is a old and complex way to update the the gear file and produce a LCIO file with alignment parameters 
+		//! Old parseMilleOut.
+		/*! This function is a old and complex way to update the the gear file and produce a LCIO file with alignment parameters
 		 *
 		 * \param [in] alignmentConstantLCIOFile This is the file which the alignment parameters will be saved in LCIO format.
 		 * \param [in] gear_aligned_file This is the new gear which will be produced.
 		 */
 		bool parseMilleOutput(std::string alignmentConstantLCIOFile, std::string gear_aligned_file);
-		//! This function simply writes the results file into a new gear file  
+		//! This function simply writes the results file into a new gear file
 		/*!
 		 */
 
 		void getNewGear();
-		//! This will move the results to the steering file and run pede. This is repeated a set number of times.  
+		//! This will move the results to the steering file and run pede. This is repeated a set number of times.
 		bool converge();
 		bool checkConverged();
 		void editSteerUsingRes();
