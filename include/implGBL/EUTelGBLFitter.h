@@ -29,7 +29,6 @@
 #include <iostream>
 
 namespace eutelescope {
-
 	class EUTelGBLFitter{
         
     private:

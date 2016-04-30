@@ -8,7 +8,7 @@ void EUTelRadCal::setRad(EUTelTrack& track, int& mode){
     if(mode == 0){
         getVarForSensorScatterersOnly(track);
     }else{
-        getThicknessAndRad(track); 
+        setThicknessAndRad(track); 
         setMeanWeight(track);
         setVarWeight(track);
         setPosVar(track);
@@ -24,9 +24,9 @@ void EUTelRadCal::setIncSenBlocks(EUTelTrack & track){
             double radPer = geo::gGeometry().planeRadLengthGlobalIncidence(itSt->getLocation(), itSt->getDirGlobalEig()); 
             Block block;
             block.senRadPer = radPer;
-            block.weigVar = 0;
-            block.weigMean = 0;
-            block.medRadPer = 0;
+//            block.weigVar = 0;
+//            block.weigMean = 0;
+//            block.medRadPer = 0;
             itSt->block = block;
             track.setRadPerTotal(track.getRadPerTotal() + radPer);//VARIANCE MUST BE CALCULATED FROM THE TOTAL RADIATION LENGTH. Highland formula is non linear under addition.
 
@@ -34,7 +34,7 @@ void EUTelRadCal::setIncSenBlocks(EUTelTrack & track){
 
 }
 
-void EUTelRadCal::getThicknessAndRad(EUTelTrack & track){ 
+void EUTelRadCal::setThicknessAndRad(EUTelTrack & track){ 
     for(std::vector<EUTelState>::iterator itSt = track.getStates().begin(); itSt != (track.getStates().end()-1); ++itSt){//Loop over included sensors.
         //simplest way without z order to ID?
         int zOrdStartInc =find(geo::gGeometry().sensorIDsVec().begin(), geo::gGeometry().sensorIDsVec().end(), itSt->getLocation() ) - geo::gGeometry().sensorIDsVec().begin();
@@ -96,12 +96,12 @@ void EUTelRadCal::setVarWeight(EUTelTrack & track){
 }
 void EUTelRadCal::setPosVar(EUTelTrack & track){ 
     for(std::vector<EUTelState>::iterator itSt = track.getStates().begin(); itSt != track.getStates().end(); ++itSt){
-        getRelativePosOfScatterers(*itSt);
+        setRelativePosOfScatterers(*itSt);
     }
     getVarForAllScatters(track);
 }
 
-void EUTelRadCal::getRelativePosOfScatterers(EUTelState & state){ 
+void EUTelRadCal::setRelativePosOfScatterers(EUTelState & state){ 
     double firstScatRelPos =  0.51*geo::gGeometry().siPlaneZSize(state.getLocation());
   //  std::cout<<"mean " <<  state.block.weigMean << " var " << state.block.weigVar <<std::endl;
     double secondScatRelPos =  state.block.weigMean + state.block.weigVar/( state.block.weigMean - firstScatRelPos);
